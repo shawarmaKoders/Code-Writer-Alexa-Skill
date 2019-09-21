@@ -37,6 +37,10 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
+def convert_to_variable_name(string):
+    return string.replace(' ', '_')
+
+
 class LaunchRequestHandler(AbstractRequestHandler):
     """Handler for skill launch."""
 
@@ -48,6 +52,68 @@ class LaunchRequestHandler(AbstractRequestHandler):
         # type: (HandlerInput) -> Response
         logger.info("In LaunchRequestHandler")
         handler_input.response_builder.speak(WELCOME_MESSAGE).ask(HELP_MESSAGE)
+        return handler_input.response_builder.response
+
+
+class NewIntegerIntentHandler(AbstractRequestHandler):
+    """Handler for New Integer initialisation."""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("NewIntegerIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In NewIntegerIntentHandler")
+
+        session_attributes = handler_input.attributes_manager.session_attributes
+        logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
+
+        integer_value = None
+        variable_name = None
+        output = "NewInteger it is!"
+        output_speak = None
+        output_display = None
+
+        integer_value_slot_data = get_slot_data(handler_input, 'integer_value', logger=logger)
+        variable_name_slot_data = get_slot_data(handler_input, 'variable_name', logger=logger)
+
+        integer_value_string = integer_value_slot_data['value']
+        if integer_value_string is None:
+            logger.debug('INTEGER VALUE NOT PROVIDED!')
+        else:
+            integer_value = int(integer_value_string)
+
+        variable_name_raw = variable_name_slot_data['value']
+        if variable_name_raw is None:
+            logger.debug('VARIABLE NAME NOT PROVIDED!')
+        else:
+            variable_name = convert_to_variable_name(variable_name_raw)
+
+        if integer_value is None:
+            output = "Empty variable doesn't mean anything. Please provide a value next time onwards."
+        elif variable_name is None:
+            output = "I'm out of options for variable names. Please provide that for me next time."
+        else:
+            script_line = "{variable_name} = {integer_value}".format(variable_name=variable_name,
+                                                                     integer_value=integer_value)
+            try:
+                session_attributes['current_script_code'] += '\n'
+                session_attributes['current_script_code'] += script_line
+            except KeyError:
+                session_attributes['current_script_code'] = script_line
+
+            output_display = script_line
+            output_speak = '<voice name="Kendra">{variable_name},</voice> ' \
+                           'is set!'.format(variable_name=variable_name_raw)
+            output = session_attributes['current_script_code']
+
+        # if output_display is None or output_speak is None:
+        #     output_display = output
+        #     output_speak = output
+
+        handler_input.response_builder.speak(output).set_card(
+            SimpleCard(SKILL_NAME, output))
         return handler_input.response_builder.response
 
 
@@ -164,12 +230,13 @@ class ResponseLogger(AbstractResponseInterceptor):
 # defined are included below. The order matters - they're processed top to bottom.
 
 sb.add_request_handler(LaunchRequestHandler())
+sb.add_request_handler(NewIntegerIntentHandler())
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(SessionEndedRequestHandler())
 
 # make sure IntentReflectorHandler is last so it doesn't override your custom intent handlers
-sb.add_request_handler(IntentReflectorHandler())
+# sb.add_request_handler(IntentReflectorHandler())
 
 # Register exception handlers
 sb.add_exception_handler(CatchAllExceptionHandler())
