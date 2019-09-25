@@ -117,6 +117,98 @@ class NewIntegerIntentHandler(AbstractRequestHandler):
         return handler_input.response_builder.response
 
 
+class NewListIntentHandler(AbstractRequestHandler):
+    """Handler for List Intent"""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("NewListIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In NewListIntentHandler")
+
+        session_attributes = handler_input.attributes_manager.session_attributes
+        logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
+
+        variable_name = None
+        variable_name_slot_data = get_slot_data(handler_input, 'variable_name', logger=logger)
+        variable_name_raw = variable_name_slot_data['value']
+
+        if variable_name_raw is None:
+            logger.debug('VARIABLE NAME NOT PROVIDED!')
+        else:
+            variable_name = convert_to_variable_name(variable_name_raw)
+
+        if variable_name is None:
+            output = "I'm out of options for variable names. Please provide that for me next time."
+        else:
+            script_line = "{variable_name} = []".format(variable_name=variable_name)
+            try:
+                session_attributes['current_script_code'] += '\n'
+                session_attributes['current_script_code'] += script_line
+            except KeyError:
+                session_attributes['current_script_code'] = script_line
+            output = session_attributes['current_script_code']
+
+        handler_input.response_builder.speak(output).set_card(
+            SimpleCard(SKILL_NAME, output))
+        return handler_input.response_builder.response
+
+
+class ListAppendIntentHandler(AbstractRequestHandler):
+    """Handler for List Append Intent"""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("ListAppendIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In ListAppendIntentHandler")
+
+        session_attributes = handler_input.attributes_manager.session_attributes
+        logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
+
+        list_value = None
+        variable_name = None
+
+        list_value_slot_data = get_slot_data(handler_input, 'list_value', logger=logger)
+        variable_name_slot_data = get_slot_data(handler_input, 'variable_name', logger=logger)
+
+        list_value_string = list_value_slot_data['value']
+        if list_value_string is None:
+            logger.debug('LIST VALUE NOT PROVIDED!')
+        else:
+            list_value = list_value_string
+
+        variable_name_raw = variable_name_slot_data['value']
+        if variable_name_raw is None:
+            logger.debug('VARIABLE NAME NOT PROVIDED!')
+        else:
+            variable_name = convert_to_variable_name(variable_name_raw)
+
+        if list_value is None:
+            output = "Empty value doesn't mean anything. Please provide a value next time onwards."
+        elif variable_name is None:
+            output = "I'm out of options for variable names. Please provide that for me next time."
+        else:
+            script_line = "{variable_name}.append({list_value})".format(variable_name=variable_name,
+                                                                        list_value=list_value)
+            
+            try:
+                session_attributes['current_script_code'] += '\n'
+                session_attributes['current_script_code'] += script_line
+            except KeyError:
+                session_attributes['current_script_code'] = script_line
+
+            output = session_attributes['current_script_code']
+
+        handler_input.response_builder.speak(output).set_card(
+            SimpleCard(SKILL_NAME, output))
+        return handler_input.response_builder.response
+
+
 class HelpIntentHandler(AbstractRequestHandler):
     """Handler for Help Intent."""
 
@@ -231,6 +323,8 @@ class ResponseLogger(AbstractResponseInterceptor):
 
 sb.add_request_handler(LaunchRequestHandler())
 sb.add_request_handler(NewIntegerIntentHandler())
+sb.add_request_handler(NewListIntentHandler())
+sb.add_request_handler(ListAppendIntentHandler())
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(SessionEndedRequestHandler())
