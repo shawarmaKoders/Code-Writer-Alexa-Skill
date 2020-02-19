@@ -1,0 +1,364 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "code writer",
+            "intents": [
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "NewIntegerIntent",
+                    "slots": [
+                        {
+                            "name": "variable_name",
+                            "type": "variable_type"
+                        },
+                        {
+                            "name": "integer_value",
+                            "type": "AMAZON.NUMBER"
+                        }
+                    ],
+                    "samples": [
+                        "create another integer varibale {variable_name} with value {integer_value}",
+                        "initialize integer {variable_name} with {integer_value}",
+                        "create an integer variable {variable_name} with value {integer_value}",
+                        "place {integer_value} in integer variable {variable_name}",
+                        "create integer {variable_name} and initialize it with {integer_value}",
+                        "make an integer variable {variable_name} with value {integer_value}",
+                        "create an integer {variable_name} with value {integer_value}"
+                    ]
+                },
+                {
+                    "name": "NewStringIntent",
+                    "slots": [
+                        {
+                            "name": "variable_name",
+                            "type": "variable_type"
+                        },
+                        {
+                            "name": "string_value",
+                            "type": "string_value_type"
+                        }
+                    ],
+                    "samples": [
+                        "create another string variable {variable_name} with value {string_value}",
+                        "create string {variable_name} and initialize it with {string_value}",
+                        "create string variable {variable_name} with value {string_value}",
+                        "make an string variable {variable_name} with value {string_value}",
+                        "create a string variable {variable_name} with value {string_value}",
+                        "place {string_value} in string variable {variable_name}",
+                        "initialize string {variable_name} with {string_value}"
+                    ]
+                },
+                {
+                    "name": "NewListIntent",
+                    "slots": [
+                        {
+                            "name": "variable_name",
+                            "type": "variable_type"
+                        }
+                    ],
+                    "samples": [
+                        "create a new list named {variable_name}",
+                        "create a new list {variable_name}",
+                        "create {variable_name} as a new list",
+                        "create a new list with name {variable_name}",
+                        "create an array with name {variable_name}",
+                        "create a new list with variable {variable_name}"
+                    ]
+                },
+                {
+                    "name": "ForLoopIntent",
+                    "slots": [
+                        {
+                            "name": "starting_number",
+                            "type": "AMAZON.NUMBER"
+                        },
+                        {
+                            "name": "ending_number",
+                            "type": "AMAZON.NUMBER"
+                        }
+                    ],
+                    "samples": [
+                        "Start a for loop from {starting_number} to {ending_number}",
+                        "Start a loop from {starting_number} to {ending_number}",
+                        "Create a for loop from {starting_number} to {ending_number}",
+                        "Loop through the range {starting_number} to {ending_number}",
+                        "Form a loop from {starting_number} to {ending_number}",
+                        "Create a loop from {starting_number} to {ending_number}"
+                    ]
+                },
+                {
+                    "name": "DisplayVariableIntent",
+                    "slots": [
+                        {
+                            "name": "variable_name",
+                            "type": "variable_type"
+                        }
+                    ],
+                    "samples": [
+                        "Output {variable_name}",
+                        "Display the value of {variable_name}",
+                        "Print {variable_name}",
+                        "Show the value of {variable_name}",
+                        "What's the value of {variable_name}"
+                    ]
+                },
+                {
+                    "name": "DeleteLineIntent",
+                    "slots": [],
+                    "samples": [
+                        "remove the previous line",
+                        "undo that for me",
+                        "delete that last one",
+                        "Clear the last line",
+                        "Delete the last line",
+                        "Remove the last line"
+                    ]
+                },
+                {
+                    "name": "ClearCodeIntent",
+                    "slots": [],
+                    "samples": [
+                        "Remove everything",
+                        "Clear up everything",
+                        "Delete everything",
+                        "Clear the whole thing up",
+                        "Clear the whole code"
+                    ]
+                },
+                {
+                    "name": "AddIndentIntent",
+                    "slots": [],
+                    "samples": [
+                        "go one indent level up",
+                        "indent right",
+                        "take an indent",
+                        "place a tab",
+                        "add a tab",
+                        "add an indent"
+                    ]
+                },
+                {
+                    "name": "RemoveIndentIntent",
+                    "slots": [],
+                    "samples": [
+                        "go one indent level down",
+                        "indent left",
+                        "take one step back",
+                        "remove one indent"
+                    ]
+                },
+                {
+                    "name": "ListAppendIntent",
+                    "slots": [
+                        {
+                            "name": "list_value",
+                            "type": "string_value_type"
+                        },
+                        {
+                            "name": "variable_name",
+                            "type": "variable_type"
+                        }
+                    ],
+                    "samples": [
+                        "append {list_value} to {variable_name}",
+                        "add {list_value} to list {variable_name}",
+                        "append {list_value} to the list {variable_name}"
+                    ]
+                },
+                {
+                    "name": "WhileLoopIntentHandler",
+                    "slots": [
+                        {
+                            "name": "first_variable",
+                            "type": "variable_type"
+                        },
+                        {
+                            "name": "operator",
+                            "type": ""
+                        },
+                        {
+                            "name": "second_variable",
+                            "type": "variable_type"
+                        }
+                    ],
+                    "samples": [
+                        "While loop until {first_variable} {operator} {second_variable}",
+                        "While loop till {first_variable} {operator} {second_variable}",
+                        "Check {first_variable} {operator} {second_variable} in a while loop",
+                        "Add while loop checking {first_variable} {operator} {second_variable}",
+                        "Add a while loop with {first_variable} {operator} {second_variable}",
+                        "Create while loop with condition {first_variable} {operator} {second_variable}",
+                        "Create a while loop checking {first_variable} {operator} {second_variable}"
+                    ]
+                }
+            ],
+            "types": [
+                {
+                    "name": "variable_type",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "ouput"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "sum"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "result"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "num"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "hello world"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "list variable"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "string variable"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "number variable"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "string_value_type",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "Python Sucks"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Python Is Cool"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "operator_type",
+                    "values": [
+                        {
+                            "id": "4",
+                            "name": {
+                                "value": "not equal to",
+                                "synonyms": [
+                                    "is not equal to"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "3",
+                            "name": {
+                                "value": "less than",
+                                "synonyms": [
+                                    "is less than"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "2",
+                            "name": {
+                                "value": "equal to",
+                                "synonyms": [
+                                    "is equal to"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "1",
+                            "name": {
+                                "value": "greater than",
+                                "synonyms": [
+                                    "is greater than"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "dialog": {
+            "intents": [
+                {
+                    "name": "NewIntegerIntent",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "variable_name",
+                            "type": "variable_type",
+                            "confirmationRequired": false,
+                            "elicitationRequired": false,
+                            "prompts": {}
+                        },
+                        {
+                            "name": "integer_value",
+                            "type": "AMAZON.NUMBER",
+                            "confirmationRequired": false,
+                            "elicitationRequired": false,
+                            "prompts": {}
+                        }
+                    ]
+                },
+                {
+                    "name": "ClearCodeIntent",
+                    "confirmationRequired": true,
+                    "prompts": {
+                        "confirmation": "Confirm.Intent.1373190617736"
+                    },
+                    "slots": []
+                }
+            ],
+            "delegationStrategy": "ALWAYS"
+        },
+        "prompts": [
+            {
+                "id": "Confirm.Intent.1373190617736",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Are you sure you want to clear whole code?"
+                    },
+                    {
+                        "type": "PlainText",
+                        "value": "Are you sure you want to delete everything?"
+                    }
+                ]
+            }
+        ]
+    }
+}
