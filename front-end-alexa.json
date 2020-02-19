@@ -189,7 +189,7 @@
                         },
                         {
                             "name": "operator",
-                            "type": ""
+                            "type": "operator_type"
                         },
                         {
                             "name": "second_variable",
