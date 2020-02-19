@@ -439,6 +439,73 @@ class ResponseLogger(AbstractResponseInterceptor):
         logger.debug("Alexa Response: {}".format(response))
 
 
+#Create new string handler
+
+
+class NewStringIntentHandler(AbstractRequestHandler):
+    """Handler for New String initialisation."""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("NewStringIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In NewStringIntentHandler")
+
+        session_attributes = handler_input.attributes_manager.session_attributes
+        logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
+
+        string_value = None
+        variable_name = None
+        output = "NewString it is!"
+        output_speak = None
+        output_display = None
+
+        string_value_slot_data = get_slot_data(handler_input, 'string_value', logger=logger)
+        variable_name_slot_data = get_slot_data(handler_input, 'variable_name', logger=logger)
+
+        string_value_string = string_value_slot_data['value']
+        if string_value_string is None:
+            logger.debug('STRING VALUE NOT PROVIDED!')
+        else:
+            string_value = string_value_string
+
+        variable_name_raw = variable_name_slot_data['value']
+        if variable_name_raw is None:
+            logger.debug('VARIABLE NAME NOT PROVIDED!')
+        else:
+            variable_name = convert_to_variable_name(variable_name_raw)
+
+        if string_value is None:
+            output = "Empty variable doesn't mean anything. Please provide a value next time onwards."
+        elif variable_name is None:
+            output = "I'm out of options for variable names. Please provide that for me next time."
+        else:
+            indent = get_indent(handler_input)
+            script_line = indent + "{variable_name} = {string_value}".format(variable_name=variable_name,
+                                                                              string_value=string_value)
+            try:
+                session_attributes['current_script_code'] += '\n'
+                session_attributes['current_script_code'] += script_line
+            except KeyError:
+                session_attributes['current_script_code'] = script_line
+
+            output_display = script_line
+            output_speak = '<voice name="Kendra">{variable_name},</voice> ' \
+                           'is set!'.format(variable_name=variable_name_raw)
+            output = session_attributes['current_script_code']
+
+        # if output_display is None or output_speak is None:
+        #     output_display = output
+        #     output_speak = output
+
+        handler_input.response_builder.speak(output).set_card(
+            SimpleCard(SKILL_NAME, output))
+        return handler_input.response_builder.response
+
+
+
 # Make sure any new handlers or interceptors you've
 # defined are included below. The order matters - they're processed top to bottom.
 
@@ -448,6 +515,7 @@ sb.add_request_handler(NewListIntentHandler())
 sb.add_request_handler(ListAppendIntentHandler())
 sb.add_request_handler(ForLoopIntentHandler())
 sb.add_request_handler(CreateWhileLoopIntentHandler())
+sb.add_request_handler(NewStringIntentHandler())
 
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
