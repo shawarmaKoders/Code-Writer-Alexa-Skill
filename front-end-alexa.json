@@ -181,7 +181,7 @@
                     ]
                 },
                 {
-                    "name": "WhileLoopIntentHandler",
+                    "name": "CreateWhileLoopIntent",
                     "slots": [
                         {
                             "name": "first_variable",
