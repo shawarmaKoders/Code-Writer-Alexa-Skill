@@ -17,6 +17,12 @@ from ask_sdk_core.handler_input import HandlerInput
 from ask_sdk_model.ui import SimpleCard
 from ask_sdk_model import Response
 
+operator_mapping = {
+    1: '>',
+    2: '==',
+    3: '<',
+    4: '!=',
+}
 
 SKILL_NAME = "Code Writer"
 WELCOME_MESSAGE = "Clickity-Click! " \
@@ -172,6 +178,60 @@ class NewListIntentHandler(AbstractRequestHandler):
         return handler_input.response_builder.response
 
 
+class CreateWhileLoopIntentHandler(AbstractRequestHandler):
+    """Handler for List Intent"""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("CreateWhileLoopIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In CreateWhileLoopIntentHandler")
+
+        session_attributes = handler_input.attributes_manager.session_attributes
+        logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
+
+        variable_name = None
+        first_variable = get_slot_data(handler_input, 'first_variable', logger=logger)['value']
+        second_variable = get_slot_data(handler_input, 'second_variable', logger=logger)['value']
+        operator_slot_data = get_slot_data(handler_input, 'operator', logger=logger)
+
+        output = ""
+        if operator_slot_data['value'] is None:
+            logger.debug('{operator} not provided')
+            output = 'Checking Condition is Not Provided.'
+            operator = ''
+        else:
+            operator_id = int(operator_slot_data['value_id'])
+            operator = operator_mapping[operator_id]
+
+        if first_variable is None:
+            logger.debug('{first_variable} not provided')
+        if second_variable is None:
+            logger.debug('{second_variable} not provided')
+
+        if (first_variable is None) and (second_variable is None):
+            output += " Neither parts of checking condition provided."
+        elif first_variable is None:
+            output += ' First side of checking condition not provided.'
+        elif second_variable is None:
+            output += ' Second side of checking condition not provided.'
+        else:
+            indent = get_indent(handler_input)
+            script_line = indent + f"while {first_variable} {operator} {second_variable}:"
+            try:
+                session_attributes['current_script_code'] += '\n'
+                session_attributes['current_script_code'] += script_line
+            except KeyError:
+                session_attributes['current_script_code'] = script_line
+            output = session_attributes['current_script_code']
+
+        handler_input.response_builder.speak(output).set_card(
+            SimpleCard(SKILL_NAME, output))
+        return handler_input.response_builder.response
+
+
 class ListAppendIntentHandler(AbstractRequestHandler):
     """Handler for List Append Intent"""
 
@@ -212,6 +272,51 @@ class ListAppendIntentHandler(AbstractRequestHandler):
             script_line = "{variable_name}.append({list_value})".format(variable_name=variable_name,
                                                                         list_value=list_value)
             
+            try:
+                session_attributes['current_script_code'] += '\n'
+                session_attributes['current_script_code'] += script_line
+            except KeyError:
+                session_attributes['current_script_code'] = script_line
+
+            output = session_attributes['current_script_code']
+
+        handler_input.response_builder.speak(output).set_card(
+            SimpleCard(SKILL_NAME, output))
+        return handler_input.response_builder.response
+
+
+class ForLoopIntentHandler(AbstractRequestHandler):
+    """Handler for List Append Intent"""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("ForLoopIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In ForLoopIntentHandler")
+
+        session_attributes = handler_input.attributes_manager.session_attributes
+        logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
+
+        starting_number = get_slot_data(handler_input, 'starting_number', logger=logger)['value']
+        ending_number = get_slot_data(handler_input, 'ending_number', logger=logger)['value']
+
+        if starting_number is None:
+            logger.debug('{starting_number} NOT PROVIDED!')
+        if ending_number is None:
+            logger.debug('{ending_number} NOT PROVIDED!')
+
+        if (starting_number is None) and (ending_number is None):
+            output = 'You have neither defined Starting, nor Ending point for the loop'
+        elif starting_number is None:
+            output = 'You have not defined starting point of the loop'
+        elif ending_number is None:
+            output = 'You have not defined ending point of the loop'
+        else:
+            indent = get_indent(handler_input)
+            script_line = indent + f"for i in range({starting_number}, {ending_number}+1):"
+            update_indent(handler_input, 1)
             try:
                 session_attributes['current_script_code'] += '\n'
                 session_attributes['current_script_code'] += script_line
@@ -341,6 +446,9 @@ sb.add_request_handler(LaunchRequestHandler())
 sb.add_request_handler(NewIntegerIntentHandler())
 sb.add_request_handler(NewListIntentHandler())
 sb.add_request_handler(ListAppendIntentHandler())
+sb.add_request_handler(ForLoopIntentHandler())
+sb.add_request_handler(CreateWhileLoopIntentHandler())
+
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(SessionEndedRequestHandler())
