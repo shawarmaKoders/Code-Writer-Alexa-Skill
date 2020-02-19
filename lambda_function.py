@@ -48,6 +48,12 @@ def get_indent(handler_input):
     return indent
 
 
+def update_indent(handler_input, update_value: int):
+    session_attributes = handler_input.attributes_manager.session_attributes
+    session_attributes['indentation_level'] = int(session_attributes['indentation_level']) + update_value
+    return session_attributes['indentation_level']
+
+
 class LaunchRequestHandler(AbstractRequestHandler):
     """Handler for skill launch."""
 
