@@ -41,6 +41,13 @@ def convert_to_variable_name(string):
     return string.replace(' ', '_')
 
 
+def get_indent(handler_input):
+    session_attributes = handler_input.attributes_manager.session_attributes
+    indent_level = int(session_attributes['indentation_level'])
+    indent = '\t' * indent_level
+    return indent
+
+
 class LaunchRequestHandler(AbstractRequestHandler):
     """Handler for skill launch."""
 
@@ -51,6 +58,8 @@ class LaunchRequestHandler(AbstractRequestHandler):
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
         logger.info("In LaunchRequestHandler")
+        session_attributes = handler_input.attributes_manager.session_attributes
+        session_attributes['indentation_level'] = 0
         handler_input.response_builder.speak(WELCOME_MESSAGE).ask(HELP_MESSAGE)
         return handler_input.response_builder.response
 
@@ -95,8 +104,9 @@ class NewIntegerIntentHandler(AbstractRequestHandler):
         elif variable_name is None:
             output = "I'm out of options for variable names. Please provide that for me next time."
         else:
-            script_line = "{variable_name} = {integer_value}".format(variable_name=variable_name,
-                                                                     integer_value=integer_value)
+            indent = get_indent(handler_input)
+            script_line = indent + "{variable_name} = {integer_value}".format(variable_name=variable_name,
+                                                                              integer_value=integer_value)
             try:
                 session_attributes['current_script_code'] += '\n'
                 session_attributes['current_script_code'] += script_line
