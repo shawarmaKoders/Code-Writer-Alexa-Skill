@@ -225,6 +225,56 @@ class ListAppendIntentHandler(AbstractRequestHandler):
         return handler_input.response_builder.response
 
 
+class ForLoopIntentHandler(AbstractRequestHandler):
+    """Handler for List Append Intent"""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("ForLoopIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In ForLoopIntentHandler")
+
+        session_attributes = handler_input.attributes_manager.session_attributes
+        logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
+
+        starting_number = get_slot_data(handler_input, 'starting_number', logger=logger)['value']
+        ending_number = get_slot_data(handler_input, 'ending_number', logger=logger)['value']
+
+        if starting_number is None:
+            logger.debug('STARTING VALUE NOT PROVIDED!')
+        else:
+            starting_number = starting_number
+
+        if starting_number is None:
+            logger.debug('{starting_number} NOT PROVIDED!')
+        if ending_number is None:
+            logger.debug('{ending_number} NOT PROVIDED!')
+
+        if (starting_number is None) and (ending_number is None):
+            output = 'You have neither defined Starting, nor Ending point for the loop'
+        elif starting_number is None:
+            output = 'You have not defined starting point of the loop'
+        elif ending_number is None:
+            output = 'You have not defined ending point of the loop'
+        else:
+            indent = get_indent(handler_input)
+            script_line = indent + f"for l in range({starting_number}, {ending_number}+1):"
+            update_indent(handler_input, 1)
+            try:
+                session_attributes['current_script_code'] += '\n'
+                session_attributes['current_script_code'] += script_line
+            except KeyError:
+                session_attributes['current_script_code'] = script_line
+
+            output = session_attributes['current_script_code']
+
+        handler_input.response_builder.speak(output).set_card(
+            SimpleCard(SKILL_NAME, output))
+        return handler_input.response_builder.response
+
+
 class HelpIntentHandler(AbstractRequestHandler):
     """Handler for Help Intent."""
 
@@ -341,6 +391,8 @@ sb.add_request_handler(LaunchRequestHandler())
 sb.add_request_handler(NewIntegerIntentHandler())
 sb.add_request_handler(NewListIntentHandler())
 sb.add_request_handler(ListAppendIntentHandler())
+sb.add_request_handler(ForLoopIntentHandler())
+
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(SessionEndedRequestHandler())
