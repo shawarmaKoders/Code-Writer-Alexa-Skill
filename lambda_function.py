@@ -220,6 +220,7 @@ class CreateWhileLoopIntentHandler(AbstractRequestHandler):
         else:
             indent = get_indent(handler_input)
             script_line = indent + f"while {first_variable} {operator} {second_variable}:"
+            update_indent(handler_input, 1)
             try:
                 session_attributes['current_script_code'] += '\n'
                 session_attributes['current_script_code'] += script_line
@@ -439,9 +440,6 @@ class ResponseLogger(AbstractResponseInterceptor):
         logger.debug("Alexa Response: {}".format(response))
 
 
-#Create new string handler
-
-
 class NewStringIntentHandler(AbstractRequestHandler):
     """Handler for New String initialisation."""
 
@@ -484,7 +482,7 @@ class NewStringIntentHandler(AbstractRequestHandler):
         else:
             indent = get_indent(handler_input)
             script_line = indent + "{variable_name} = {string_value}".format(variable_name=variable_name,
-                                                                              string_value=string_value)
+                                                                             string_value=string_value)
             try:
                 session_attributes['current_script_code'] += '\n'
                 session_attributes['current_script_code'] += script_line
@@ -503,7 +501,6 @@ class NewStringIntentHandler(AbstractRequestHandler):
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
         return handler_input.response_builder.response
-
 
 
 # Make sure any new handlers or interceptors you've
