@@ -141,28 +141,6 @@
                     ]
                 },
                 {
-                    "name": "AddIndentIntent",
-                    "slots": [],
-                    "samples": [
-                        "go one indent level up",
-                        "indent right",
-                        "take an indent",
-                        "place a tab",
-                        "add a tab",
-                        "add an indent"
-                    ]
-                },
-                {
-                    "name": "RemoveIndentIntent",
-                    "slots": [],
-                    "samples": [
-                        "go one indent level down",
-                        "indent left",
-                        "take one step back",
-                        "remove one indent"
-                    ]
-                },
-                {
                     "name": "ListAppendIntent",
                     "slots": [
                         {
