@@ -505,6 +505,63 @@ class NewStringIntentHandler(AbstractRequestHandler):
         return handler_input.response_builder.response
 
 
+# write print statements-- Basic strings
+
+class PrintStatementIntentHandler(AbstractRequestHandler):
+    """Handler for New String initialisation."""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("PrintStatementIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In PrintStatementIntentHandler")
+
+        session_attributes = handler_input.attributes_manager.session_attributes
+        logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
+
+        string_value = None
+        variable_name = None
+        output = "Print Command Written"
+        output_speak = None
+        output_display = None
+
+        print_statement_slot_data = get_slot_data(handler_input, 'print_statement', logger=logger)
+
+        print_statement_string = print_statement_slot_data['value']
+        if print_statement_string is None:
+            logger.debug('Nothing provided to print')
+        else:
+            print_statement = print_statement_string
+
+        if print_statement is None:
+            output = "Nothing provided to print.Please let me know what to print."
+        else:
+            indent = get_indent(handler_input)
+            script_line = indent + "print('{string_value}')".format(string_value=print_statement)
+            try:
+                session_attributes['current_script_code'] += '\n'
+                session_attributes['current_script_code'] += script_line
+            except KeyError:
+                session_attributes['current_script_code'] = script_line
+
+            output_display = script_line
+            output_speak = 'Would print <voice name="Kendra">{string_value},</voice> '.format(string_value=print_statement)
+            output = session_attributes['current_script_code']
+
+        # if output_display is None or output_speak is None:
+        #     output_display = output
+        #     output_speak = output
+
+        handler_input.response_builder.speak(output).set_card(
+            SimpleCard(SKILL_NAME, output))
+        return handler_input.response_builder.response
+
+
+
+
+
 
 # Make sure any new handlers or interceptors you've
 # defined are included below. The order matters - they're processed top to bottom.
@@ -520,7 +577,7 @@ sb.add_request_handler(NewStringIntentHandler())
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(SessionEndedRequestHandler())
-
+sb.add_request_handler(PrintStatementIntentHandler())
 # make sure IntentReflectorHandler is last so it doesn't override your custom intent handlers
 # sb.add_request_handler(IntentReflectorHandler())
 
