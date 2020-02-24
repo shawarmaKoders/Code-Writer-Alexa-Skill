@@ -447,6 +447,53 @@ class NewElIfBlockIntentHandler(AbstractRequestHandler):
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
         return handler_input.response_builder.response
+class ChangeItemAtIndexIntentHandler(AbstractRequestHandler):
+    """Handler for New Integer initialisation."""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("ChangeItemAtIndexIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In ChangeItemAtIndexIntentHandler")
+
+        session_attributes = handler_input.attributes_manager.session_attributes
+        logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
+        
+        first_variable = get_slot_data(handler_input, 'first_variable', logger=logger)['value']
+        second_variable = get_slot_data(handler_input, 'second_variable', logger=logger)['value']
+        index_value = get_slot_data(handler_input, 'index_value', logger=logger)['value']
+        output=""
+        if index_value is None:
+            logger.debug('{index_value} not provided')           
+        if first_variable is None:
+            logger.debug('{first_variable} not provided')
+        if second_variable is None:
+            logger.debug('{second_variable} not provided')
+
+        if (first_variable is None) and (second_variable is None) and (index_value is None):
+            output += 'All three : List name, index value and variable name not provided.'
+        elif first_variable is None:
+            output += ' List name not provided.'
+        elif second_variable is None:
+            output += ' variable which you want to add not provided.'
+        else:
+            indent = get_indent(handler_input)
+            script_line = indent + f"{first_variable}[{index_value}]={second_variable}"
+            try:
+                session_attributes['current_script_code'] += '\n'
+                session_attributes['current_script_code'] += script_line
+            except KeyError:
+                session_attributes['current_script_code'] = script_line
+                
+            output = session_attributes['current_script_code']
+
+        handler_input.response_builder.speak(output).set_card(
+            SimpleCard(SKILL_NAME, output))
+        return handler_input.response_builder.response
+
+
 
 class CancelOrStopIntentHandler(AbstractRequestHandler):
     """Single handler for Cancel and Stop Intent."""
@@ -556,6 +603,7 @@ sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(SessionEndedRequestHandler())
 sb.add_request_handler(NewIfBlockIntentHandler())
 sb.add_request_handler(NewElIfBlockIntentHandler())
+sb.add_request_handler(ChangeItemAtIndexIntentHandler())
 
 # make sure IntentReflectorHandler is last so it doesn't override your custom intent handlers
 # sb.add_request_handler(IntentReflectorHandler())
