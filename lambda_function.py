@@ -345,6 +345,108 @@ class HelpIntentHandler(AbstractRequestHandler):
             HELP_REPROMPT).set_card(SimpleCard(SKILL_NAME, HELP_MESSAGE))
         return handler_input.response_builder.response
 
+class NewIfBlockIntentHandler(AbstractRequestHandler):
+    """Handler for New Integer initialisation."""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("NewIfBlockIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In NewIfBlockIntentHandler")
+
+        session_attributes = handler_input.attributes_manager.session_attributes
+        logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
+        
+        first_variable = get_slot_data(handler_input, 'first_variable', logger=logger)['value']
+        second_variable = get_slot_data(handler_input, 'second_variable', logger=logger)['value']
+        operator_slot_data = get_slot_data(handler_input, 'operator', logger=logger)
+        output=""
+        if operator_slot_data['value'] is None:
+            logger.debug('{operator} not provided')
+            output = 'Checking Condition is Not Provided.'
+            operator = ''
+        else:
+            operator_id = int(operator_slot_data['value_id'])
+            operator = operator_mapping[operator_id]
+        
+        if first_variable is None:
+            logger.debug('{first_variable} not provided')
+        if second_variable is None:
+            logger.debug('{second_variable} not provided')
+
+        if (first_variable is None) and (second_variable is None):
+            output += 'Neither parts of checking condition provided.'
+        elif first_variable is None:
+            output += ' First side of checking condition not provided.'
+        elif second_variable is None:
+            output += ' Second side of checking condition not provided.'
+        else:
+            indent = get_indent(handler_input)
+            script_line = indent + f"if {first_variable} {operator} {second_variable}:"
+            try:
+                session_attributes['current_script_code'] += '\n'
+                session_attributes['current_script_code'] += script_line
+            except KeyError:
+                session_attributes['current_script_code'] = script_line
+                
+            output = session_attributes['current_script_code']
+
+        handler_input.response_builder.speak(output).set_card(
+            SimpleCard(SKILL_NAME, output))
+        return handler_input.response_builder.response
+class NewElIfBlockIntentHandler(AbstractRequestHandler):
+    """Handler for New Integer initialisation."""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("NewElIfBlockIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In NewElIfBlockIntentHandler")
+
+        session_attributes = handler_input.attributes_manager.session_attributes
+        logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
+        
+        first_variable = get_slot_data(handler_input, 'first_variable', logger=logger)['value']
+        second_variable = get_slot_data(handler_input, 'second_variable', logger=logger)['value']
+        operator_slot_data = get_slot_data(handler_input, 'operator', logger=logger)
+        output=""
+        if operator_slot_data['value'] is None:
+            logger.debug('{operator} not provided')
+            output = 'Checking Condition is Not Provided.'
+            operator = ''
+        else:
+            operator_id = int(operator_slot_data['value_id'])
+            operator = operator_mapping[operator_id]
+        
+        if first_variable is None:
+            logger.debug('{first_variable} not provided')
+        if second_variable is None:
+            logger.debug('{second_variable} not provided')
+
+        if (first_variable is None) and (second_variable is None):
+            output += 'Neither parts of checking condition provided.'
+        elif first_variable is None:
+            output += ' First side of checking condition not provided.'
+        elif second_variable is None:
+            output += ' Second side of checking condition not provided.'
+        else:
+            indent = get_indent(handler_input)
+            script_line = indent + f"elif {first_variable} {operator} {second_variable}:"
+            try:
+                session_attributes['current_script_code'] += '\n'
+                session_attributes['current_script_code'] += script_line
+            except KeyError:
+                session_attributes['current_script_code'] = script_line
+                
+            output = session_attributes['current_script_code']
+
+        handler_input.response_builder.speak(output).set_card(
+            SimpleCard(SKILL_NAME, output))
+        return handler_input.response_builder.response
 
 class CancelOrStopIntentHandler(AbstractRequestHandler):
     """Single handler for Cancel and Stop Intent."""
@@ -452,6 +554,8 @@ sb.add_request_handler(CreateWhileLoopIntentHandler())
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(SessionEndedRequestHandler())
+sb.add_request_handler(NewIfBlockIntentHandler())
+sb.add_request_handler(NewElIfBlockIntentHandler())
 
 # make sure IntentReflectorHandler is last so it doesn't override your custom intent handlers
 # sb.add_request_handler(IntentReflectorHandler())
