@@ -349,10 +349,19 @@ class ExecuteCodeIntentHandler(AbstractRequestHandler):
 
         if 'current_script_code' in session_attributes:
             code_string = session_attributes['current_script_code']
+            code_string += '\nprint("It ran successfully!")'
             code_result = execute_code(code_string)
-            output = f"Here's the URL for your executed code: {code_result['code_url']}"
+            output = ''
+            if code_result['has_compilation_error']:
+                output += "Your couldn't be compiled because of compilation error. "
+            elif code_result['has_run_time_error']:
+                output += "Your code has some errors. "
+            elif len(code_result['output'].strip()) > 0:
+                output += f'Output for your code is, ' \
+                    f'<emphasis level="strong">{code_result["output"]}.</emphasis> '
+            output += f"Here's the URL for your executed code: {code_result['code_url']}"
         else:
-            output = "You haven't entered any code to get ouput for. " \
+            output = "You haven't entered any code to get output for. " \
                      "Please continue by speaking code!"
 
         handler_input.response_builder.speak(output).set_card(
