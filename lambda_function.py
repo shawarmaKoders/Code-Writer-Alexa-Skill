@@ -17,6 +17,8 @@ from ask_sdk_core.handler_input import HandlerInput
 from ask_sdk_model.ui import SimpleCard
 from ask_sdk_model import Response
 
+from api_utils import execute_code
+
 operator_mapping = {
     1: '>',
     2: '==',
