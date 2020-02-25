@@ -183,6 +183,18 @@
                         "Create while loop with condition {first_variable} {operator} {second_variable}",
                         "Create a while loop checking {first_variable} {operator} {second_variable}"
                     ]
+                },
+                {
+                    "name": "ExecuteCodeIntent",
+                    "slots": [],
+                    "samples": [
+                        "Run this code for me",
+                        "Give me the results of this code",
+                        "Give the output of current code",
+                        "Run the current code",
+                        "Execute it",
+                        "Execute the current code"
+                    ]
                 }
             ],
             "types": [

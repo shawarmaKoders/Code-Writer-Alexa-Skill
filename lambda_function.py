@@ -333,6 +333,33 @@ class ForLoopIntentHandler(AbstractRequestHandler):
         return handler_input.response_builder.response
 
 
+class ExecuteCodeIntentHandler(AbstractRequestHandler):
+    """Handler for Executing code through external API"""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("ExecuteCodeIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In ExecuteCodeIntentHandler")
+
+        session_attributes = handler_input.attributes_manager.session_attributes
+        logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
+
+        if 'current_script_code' in session_attributes:
+            code_string = session_attributes['current_script_code']
+            code_result = execute_code(code_string)
+            output = f"Here's the URL for your executed code: {code_result['code_url']}"
+        else:
+            output = "You haven't entered any code to get ouput for. " \
+                     "Please continue by speaking code!"
+
+        handler_input.response_builder.speak(output).set_card(
+            SimpleCard(SKILL_NAME, output))
+        return handler_input.response_builder.response
+
+
 class HelpIntentHandler(AbstractRequestHandler):
     """Handler for Help Intent."""
 
@@ -515,6 +542,7 @@ sb.add_request_handler(ListAppendIntentHandler())
 sb.add_request_handler(ForLoopIntentHandler())
 sb.add_request_handler(CreateWhileLoopIntentHandler())
 sb.add_request_handler(NewStringIntentHandler())
+sb.add_request_handler(ExecuteCodeIntentHandler())
 
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
