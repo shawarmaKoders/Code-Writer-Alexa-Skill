@@ -505,6 +505,39 @@ class NewStringIntentHandler(AbstractRequestHandler):
         return handler_input.response_builder.response
 
 
+
+# Else Intent handler
+
+class NewElseBlockIntentHandler(AbstractRequestHandler):
+    """Handler for New Else Block."""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("NewElseBlockIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In NewElseBlockIntentHandler")
+
+        session_attributes = handler_input.attributes_manager.session_attributes
+        logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
+       
+        output=""
+        indent = get_indent(handler_input)
+        script_line = indent + f"else :"
+        try:
+            session_attributes['current_script_code'] += '\n'
+            session_attributes['current_script_code'] += script_line
+        except KeyError:
+            session_attributes['current_script_code'] = script_line
+                
+            output = session_attributes['current_script_code']
+
+        handler_input.response_builder.speak(output).set_card(
+            SimpleCard(SKILL_NAME, output))
+        return handler_input.response_builder.response
+
+
 # Make sure any new handlers or interceptors you've
 # defined are included below. The order matters - they're processed top to bottom.
 
@@ -519,6 +552,7 @@ sb.add_request_handler(NewStringIntentHandler())
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(SessionEndedRequestHandler())
+sb.add_request_handler(NewElseBlockIntentHandler())
 
 # make sure IntentReflectorHandler is last so it doesn't override your custom intent handlers
 # sb.add_request_handler(IntentReflectorHandler())
