@@ -345,16 +345,17 @@ class HelpIntentHandler(AbstractRequestHandler):
             HELP_REPROMPT).set_card(SimpleCard(SKILL_NAME, HELP_MESSAGE))
         return handler_input.response_builder.response
 
-class NewIfBlockIntentHandler(AbstractRequestHandler):
-    """Handler for New Integer initialisation."""
+
+class NewElIfBlockIntentHandler(AbstractRequestHandler):
+    """Handler for New ElIf Block."""
 
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
-        return is_intent_name("NewIfBlockIntent")(handler_input)
+        return is_intent_name("NewElIfBlockIntent")(handler_input)
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        logger.info("In NewIfBlockIntentHandler")
+        logger.info("In NewElIfBlockIntentHandler")
 
         session_attributes = handler_input.attributes_manager.session_attributes
         logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
@@ -384,7 +385,8 @@ class NewIfBlockIntentHandler(AbstractRequestHandler):
             output += ' Second side of checking condition not provided.'
         else:
             indent = get_indent(handler_input)
-            script_line = indent + f"if {first_variable} {operator} {second_variable}:"
+            script_line = indent + f"elif {first_variable} {operator} {second_variable}:"
+            update_indent(handler_input, 1)
             try:
                 session_attributes['current_script_code'] += '\n'
                 session_attributes['current_script_code'] += script_line
@@ -396,6 +398,8 @@ class NewIfBlockIntentHandler(AbstractRequestHandler):
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
         return handler_input.response_builder.response
+
+
 class NewElIfBlockIntentHandler(AbstractRequestHandler):
     """Handler for New Integer initialisation."""
 
