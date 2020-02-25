@@ -592,6 +592,7 @@ sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(SessionEndedRequestHandler())
 sb.add_request_handler(NewIfBlockIntentHandler())
 sb.add_request_handler(NewElIfBlockIntentHandler())
+sb.add_request_handler(NewElseBlockIntentHandler())
 
 # make sure IntentReflectorHandler is last so it doesn't override your custom intent handlers
 # sb.add_request_handler(IntentReflectorHandler())
