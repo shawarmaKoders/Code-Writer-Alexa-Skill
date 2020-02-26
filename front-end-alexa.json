@@ -195,6 +195,23 @@
                         "Execute it",
                         "Execute the current code"
                     ]
+                },
+                {
+                    "name": "RemoveItemIntent",
+                    "slots": [
+                        {
+                            "name": "first_variable",
+                            "type": "variable_type"
+                        },
+                        {
+                            "name": "second_variable",
+                            "type": "variable_type"
+                        }
+                    ],
+                    "samples": [
+                        "remove {second_variable} from list {first_variable}",
+                        "in list {first_variable} remove {second_variable}"
+                    ]
                 }
             ],
             "types": [
