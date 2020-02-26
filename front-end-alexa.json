@@ -220,56 +220,6 @@
                     "values": [
                         {
                             "name": {
-                                "value": "ten"
-                            }
-                        },
-                        {
-                            "name": {
-                                "value": "nine"
-                            }
-                        },
-                        {
-                            "name": {
-                                "value": "eight"
-                            }
-                        },
-                        {
-                            "name": {
-                                "value": "seven"
-                            }
-                        },
-                        {
-                            "name": {
-                                "value": "six"
-                            }
-                        },
-                        {
-                            "name": {
-                                "value": "five"
-                            }
-                        },
-                        {
-                            "name": {
-                                "value": "four"
-                            }
-                        },
-                        {
-                            "name": {
-                                "value": "three"
-                            }
-                        },
-                        {
-                            "name": {
-                                "value": "two"
-                            }
-                        },
-                        {
-                            "name": {
-                                "value": "one"
-                            }
-                        },
-                        {
-                            "name": {
                                 "value": "output"
                             }
                         },
