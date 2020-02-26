@@ -183,6 +183,49 @@
                         "Create while loop with condition {first_variable} {operator} {second_variable}",
                         "Create a while loop checking {first_variable} {operator} {second_variable}"
                     ]
+                },
+                {
+                    "name": "PrintStatementIntent",
+                    "slots": [
+                        {
+                            "name": "print_statement",
+                            "type": "string_value_type"
+                        }
+                    ],
+                    "samples": [
+                        "display {print_statement}",
+                        "write on console {print_statement}",
+                        "{print_statement} should be displayed",
+                        "now display {print_statement}",
+                        "now output {print_statement} to console",
+                        "print {print_statement}"
+                    ]
+                },
+                {
+                    "name": "ExecuteCodeIntent",
+                    "slots": [],
+                    "samples": [
+                        "Run this code for me",
+                        "Give me the results of this code",
+                        "Give the output of current code",
+                        "Run the current code",
+                        "Execute it",
+                        "Execute the current code"
+                    ]
+                },
+                {
+                    "name": "SortingListIntent",
+                    "slots": [
+                        {
+                            "name": "first_variable",
+                            "type": "variable_type"
+                        }
+                    ],
+                    "samples": [
+                        "get list {first_variable} sorted",
+                        "sort list {first_variable}",
+                        "sort the list named {first_variable}"
+                    ]
                 }
             ],
             "types": [
@@ -191,7 +234,7 @@
                     "values": [
                         {
                             "name": {
-                                "value": "ouput"
+                                "value": "output"
                             }
                         },
                         {
@@ -234,6 +277,31 @@
                 {
                     "name": "string_value_type",
                     "values": [
+                        {
+                            "name": {
+                                "value": "four"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "five"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "three"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "two"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "one"
+                            }
+                        },
                         {
                             "name": {
                                 "value": "Python Sucks"
