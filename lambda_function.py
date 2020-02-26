@@ -334,7 +334,7 @@ class ForLoopIntentHandler(AbstractRequestHandler):
 
 
 
-class RemoveItemIntentHandler(AbstractRequestHandler):
+class RemoveItemFromListIntentHandler(AbstractRequestHandler):
     """Handler for removing an item from list."""
 
     def can_handle(self, handler_input):
@@ -343,7 +343,7 @@ class RemoveItemIntentHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        logger.info("In RemoveItemIntentHandler")
+        logger.info("In RemoveItemFromListIntentHandler")
 
         session_attributes = handler_input.attributes_manager.session_attributes
         logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
@@ -756,7 +756,7 @@ sb.add_request_handler(ListAppendIntentHandler())
 sb.add_request_handler(ForLoopIntentHandler())
 sb.add_request_handler(CreateWhileLoopIntentHandler())
 sb.add_request_handler(NewStringIntentHandler())
-sb.add_request_handler(RemoveItemIntentHandler())
+sb.add_request_handler(RemoveItemFromListIntentHandler())
 sb.add_request_handler(ExecuteCodeIntentHandler())
 sb.add_request_handler(AddCommentIntentHandler())
 
