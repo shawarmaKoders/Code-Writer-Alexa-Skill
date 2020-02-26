@@ -532,7 +532,7 @@ class PrintStatementIntentHandler(AbstractRequestHandler):
             print_statement = print_statement_string
 
         if print_statement is None:
-            output = "Nothing provided to print, please let me know what to print."
+            output = "Nothing provided to print. Please let me know what to print."
         else:
             indent = get_indent(handler_input)
             script_line = indent + "print('{string_value}')".format(string_value=print_statement)
@@ -584,7 +584,7 @@ class DisplayVariableIntentHandler(AbstractRequestHandler):
             print_statement = print_statement_string
 
         if print_statement is None:
-            output = "No matching variable found to print . Please supply correct variable to print"
+            output = "No matching variable found to print. Please supply correct variable to print"
         else:
             indent = get_indent(handler_input)
             script_line = indent + "print({string_value})".format(string_value=print_statement)
@@ -595,7 +595,7 @@ class DisplayVariableIntentHandler(AbstractRequestHandler):
                 session_attributes['current_script_code'] = script_line
 
             output_display = script_line
-            output_speak = 'added print statement for variable <voice name="Kendra">{string_value},</voice> '.format(string_value=print_statement)
+            output_speak = 'Added print statement for variable <voice name="Kendra">{string_value},</voice> '.format(string_value=print_statement)
             output = session_attributes['current_script_code']
 
         # if output_display is None or output_speak is None:
