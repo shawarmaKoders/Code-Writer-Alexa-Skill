@@ -372,6 +372,46 @@ class SortingListIntentHandler(AbstractRequestHandler):
         return handler_input.response_builder.response
 
 
+class ExecuteCodeIntentHandler(AbstractRequestHandler):
+    """Handler for Executing code through external API"""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("ExecuteCodeIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In ExecuteCodeIntentHandler")
+
+        session_attributes = handler_input.attributes_manager.session_attributes
+        logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
+        final_result = None
+
+        if 'current_script_code' in session_attributes:
+            code_string = session_attributes['current_script_code']
+            code_string += '\nprint("It ran successfully!")'
+            code_result = execute_code(code_string)
+            result_string = code_result['output']
+            output = ''
+            if code_result['has_compilation_error']:
+                output += "Your couldn't be compiled because of compilation error. "
+            elif code_result['has_run_time_error']:
+                output += "Your code has some errors. "
+            elif len(result_string.strip()) > 0:
+                output += f'Output for your code is, ' \
+                    f'<emphasis level="strong">{result_string.strip()}</emphasis> '
+                final_result = result_string
+            output += f"Here's the URL for your executed code: {code_result['code_url']}"
+        else:
+            output = "You haven't entered any code to get output for. " \
+                     "Please continue by speaking code!"
+
+        logger.info(f'FINAL OUTPUT: {final_result}')
+        handler_input.response_builder.speak(output).set_card(
+            SimpleCard(SKILL_NAME, output))
+        return handler_input.response_builder.response
+
+
 class HelpIntentHandler(AbstractRequestHandler):
     """Handler for Help Intent."""
 
@@ -544,6 +584,109 @@ class NewStringIntentHandler(AbstractRequestHandler):
         return handler_input.response_builder.response
 
 
+class PrintStatementIntentHandler(AbstractRequestHandler):
+    """Handler for Print statement initialisation."""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("PrintStatementIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In PrintStatementIntentHandler")
+
+        session_attributes = handler_input.attributes_manager.session_attributes
+        logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
+
+        string_value = None
+        variable_name = None
+        output = "Print Command Written"
+        output_speak = None
+        output_display = None
+
+        print_statement_slot_data = get_slot_data(handler_input, 'print_statement', logger=logger)
+
+        print_statement_string = print_statement_slot_data['value']
+        if print_statement_string is None:
+            logger.debug('Nothing provided to print')
+        else:
+            print_statement = print_statement_string
+
+        if print_statement is None:
+            output = "Nothing provided to print. Please let me know what to print."
+        else:
+            indent = get_indent(handler_input)
+            script_line = indent + "print('{string_value}')".format(string_value=print_statement)
+            try:
+                session_attributes['current_script_code'] += '\n'
+                session_attributes['current_script_code'] += script_line
+            except KeyError:
+                session_attributes['current_script_code'] = script_line
+
+            output_display = script_line
+            output_speak = 'Would print <voice name="Kendra">{string_value},</voice> '.format(string_value=print_statement)
+            output = session_attributes['current_script_code']
+
+        # if output_display is None or output_speak is None:
+        #     output_display = output
+        #     output_speak = output
+
+        handler_input.response_builder.speak(output).set_card(
+            SimpleCard(SKILL_NAME, output))
+        return handler_input.response_builder.response
+
+
+class DisplayVariableIntentHandler(AbstractRequestHandler):
+    """Handler for printing variables """
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("DisplayVariableIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In DisplayVariableIntentHandler")
+
+        session_attributes = handler_input.attributes_manager.session_attributes
+        logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
+
+        string_value = None
+        variable_name = None
+        output = "Value of variable displayed"
+        output_speak = None
+        output_display = None
+
+        print_statement_slot_data = get_slot_data(handler_input, 'variable_name', logger=logger)
+
+        print_statement_string = print_statement_slot_data['value']
+        if print_statement_string is None:
+            logger.debug('No variable supplied to print')
+        else:
+            print_statement = print_statement_string
+
+        if print_statement is None:
+            output = "No matching variable found to print. Please supply correct variable to print"
+        else:
+            indent = get_indent(handler_input)
+            script_line = indent + "print({string_value})".format(string_value=print_statement)
+            try:
+                session_attributes['current_script_code'] += '\n'
+                session_attributes['current_script_code'] += script_line
+            except KeyError:
+                session_attributes['current_script_code'] = script_line
+
+            output_display = script_line
+            output_speak = 'Added print statement for variable <voice name="Kendra">{string_value},</voice> '.format(string_value=print_statement)
+            output = session_attributes['current_script_code']
+
+        # if output_display is None or output_speak is None:
+        #     output_display = output
+        #     output_speak = output
+
+        handler_input.response_builder.speak(output).set_card(
+            SimpleCard(SKILL_NAME, output))
+        return handler_input.response_builder.response
+
 # Make sure any new handlers or interceptors you've
 # defined are included below. The order matters - they're processed top to bottom.
 
@@ -555,10 +698,12 @@ sb.add_request_handler(ForLoopIntentHandler())
 sb.add_request_handler(CreateWhileLoopIntentHandler())
 sb.add_request_handler(NewStringIntentHandler())
 sb.add_request_handler(SortingListIntentHandler())
+sb.add_request_handler(ExecuteCodeIntentHandler())
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(SessionEndedRequestHandler())
-
+sb.add_request_handler(PrintStatementIntentHandler())
+sb.add_request_handler(DisplayVariableIntentHandler())
 # make sure IntentReflectorHandler is last so it doesn't override your custom intent handlers
 # sb.add_request_handler(IntentReflectorHandler())
 
