@@ -503,10 +503,8 @@ class NewStringIntentHandler(AbstractRequestHandler):
         return handler_input.response_builder.response
 
 
-# write print statements-- Basic strings
-
 class PrintStatementIntentHandler(AbstractRequestHandler):
-    """Handler for New String initialisation."""
+    """Handler for Print statement initialisation."""
 
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
@@ -534,7 +532,7 @@ class PrintStatementIntentHandler(AbstractRequestHandler):
             print_statement = print_statement_string
 
         if print_statement is None:
-            output = "Nothing provided to print.Please let me know what to print."
+            output = "Nothing provided to print, please let me know what to print."
         else:
             indent = get_indent(handler_input)
             script_line = indent + "print('{string_value}')".format(string_value=print_statement)
@@ -556,10 +554,9 @@ class PrintStatementIntentHandler(AbstractRequestHandler):
             SimpleCard(SKILL_NAME, output))
         return handler_input.response_builder.response
 
-#display variable intent
 
 class DisplayVariableIntentHandler(AbstractRequestHandler):
-    """Handler for New String initialisation."""
+    """Handler for printing variables """
 
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
@@ -598,7 +595,7 @@ class DisplayVariableIntentHandler(AbstractRequestHandler):
                 session_attributes['current_script_code'] = script_line
 
             output_display = script_line
-            output_speak = 'displayed value of <voice name="Kendra">{string_value},</voice> '.format(string_value=print_statement)
+            output_speak = 'added print statement for variable <voice name="Kendra">{string_value},</voice> '.format(string_value=print_statement)
             output = session_attributes['current_script_code']
 
         # if output_display is None or output_speak is None:
