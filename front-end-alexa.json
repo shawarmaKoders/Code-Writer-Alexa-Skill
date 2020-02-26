@@ -195,6 +195,23 @@
                         "Execute it",
                         "Execute the current code"
                     ]
+                },
+                {
+                    "name": "JoiningTwoListIntent",
+                    "slots": [
+                        {
+                            "name": "second_variable",
+                            "type": "variable_type"
+                        },
+                        {
+                            "name": "first_variable",
+                            "type": "variable_type"
+                        }
+                    ],
+                    "samples": [
+                        "join list {second_variable} at the end of list {first_variable}",
+                        "join list {second_variable} with list {first_variable}"
+                    ]
                 }
             ],
             "types": [
