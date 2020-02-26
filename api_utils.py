@@ -16,6 +16,9 @@ def execute_code(code_string):
     response = requests.post(api_url, data=data)
     response_data = response.json()
     response_data['code_url'] = f"{gfg_url}/{response_data.pop('id')}"
+    response_data['has_compilation_error'] = len(response_data.pop('cmpError')) > 0
+    response_data['has_run_time_error'] = len(response_data.pop('rntError')) > 0
+
     response_data.pop('hash')
     response_data.pop('lxcOutput')
 

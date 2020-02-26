@@ -185,6 +185,7 @@
                     ]
                 },
                 {
+<<<<<<< HEAD
                     "name": "PrintStatementIntent",
                     "slots": [
                         {
@@ -202,6 +203,8 @@
                     ]
                 },
                 {
+=======
+>>>>>>> de75da67454f994e7fd781f700dcbe7d4aecdf02
                     "name": "ExecuteCodeIntent",
                     "slots": [],
                     "samples": [
@@ -212,6 +215,7 @@
                         "Execute it",
                         "Execute the current code"
                     ]
+<<<<<<< HEAD
                 },
                 {
                     "name": "SortingListIntent",
@@ -226,6 +230,8 @@
                         "sort list {first_variable}",
                         "sort the list named {first_variable}"
                     ]
+=======
+>>>>>>> de75da67454f994e7fd781f700dcbe7d4aecdf02
                 }
             ],
             "types": [
