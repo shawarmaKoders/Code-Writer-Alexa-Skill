@@ -185,7 +185,6 @@
                     ]
                 },
                 {
-<<<<<<< HEAD
                     "name": "PrintStatementIntent",
                     "slots": [
                         {
@@ -203,8 +202,6 @@
                     ]
                 },
                 {
-=======
->>>>>>> de75da67454f994e7fd781f700dcbe7d4aecdf02
                     "name": "ExecuteCodeIntent",
                     "slots": [],
                     "samples": [
@@ -215,7 +212,21 @@
                         "Execute it",
                         "Execute the current code"
                     ]
-<<<<<<< HEAD
+                },
+                {
+                    "name": "AddCommentIntent",
+                    "slots": [
+                        {
+                            "name": "comment_string",
+                            "type": "string_value_type"
+                        }
+                    ],
+                    "samples": [
+                        "add comment {comment_string}",
+                        "put comment {comment_string}",
+                        "comment {comment_string}",
+                        "write a comment {comment_string}"
+                    ]
                 },
                 {
                     "name": "SortingListIntent",
@@ -230,8 +241,6 @@
                         "sort list {first_variable}",
                         "sort the list named {first_variable}"
                     ]
-=======
->>>>>>> de75da67454f994e7fd781f700dcbe7d4aecdf02
                 }
             ],
             "types": [
