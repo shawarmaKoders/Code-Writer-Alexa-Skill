@@ -399,6 +399,7 @@ class NewIfBlockIntentHandler(AbstractRequestHandler):
         return handler_input.response_builder.response
 
 
+
 class NewElIfBlockIntentHandler(AbstractRequestHandler):
     """Handler for New ElIf Block."""
 
@@ -412,6 +413,7 @@ class NewElIfBlockIntentHandler(AbstractRequestHandler):
 
         session_attributes = handler_input.attributes_manager.session_attributes
         logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
+
         
         first_variable = get_slot_data(handler_input, 'first_variable', logger=logger)['value']
         second_variable = get_slot_data(handler_input, 'second_variable', logger=logger)['value']
@@ -437,6 +439,7 @@ class NewElIfBlockIntentHandler(AbstractRequestHandler):
         elif second_variable is None:
             output += ' Second side of checking condition not provided.'
         else:
+            update_indent(handler_input,-1)
             indent = get_indent(handler_input)
             script_line = indent + f"elif {first_variable} {operator} {second_variable}:"
             update_indent(handler_input, 1)
@@ -451,6 +454,7 @@ class NewElIfBlockIntentHandler(AbstractRequestHandler):
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
         return handler_input.response_builder.response
+
 
 class NewElseBlockIntentHandler(AbstractRequestHandler):
     """Handler for New Else Block."""
@@ -467,6 +471,7 @@ class NewElseBlockIntentHandler(AbstractRequestHandler):
         logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
        
         output=""
+        update_indent(handler_input,-1)
         indent = get_indent(handler_input)
         script_line = indent + f"else :"
         update_indent(handler_input, 1)
@@ -481,6 +486,8 @@ class NewElseBlockIntentHandler(AbstractRequestHandler):
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
         return handler_input.response_builder.response
+
+
 
 
 
