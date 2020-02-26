@@ -701,8 +701,6 @@ class AddCommentIntentHandler(AbstractRequestHandler):
         return handler_input.response_builder.response
 
 
-
-
 # Make sure any new handlers or interceptors you've
 # defined are included below. The order matters - they're processed top to bottom.
 
