@@ -93,9 +93,6 @@
                         }
                     ],
                     "samples": [
-                        "Start a for loop from {starting_number} to {ending_number}",
-                        "Start a loop from {starting_number} to {ending_number}",
-                        "Create a for loop from {starting_number} to {ending_number}",
                         "Loop through the range {starting_number} to {ending_number}",
                         "Form a loop from {starting_number} to {ending_number}",
                         "Create a loop from {starting_number} to {ending_number}"
@@ -112,7 +109,6 @@
                     "samples": [
                         "Output {variable_name}",
                         "Display the value of {variable_name}",
-                        "Print {variable_name}",
                         "Show the value of {variable_name}",
                         "What's the value of {variable_name}"
                     ]
@@ -141,6 +137,28 @@
                     ]
                 },
                 {
+                    "name": "AddIndentIntent",
+                    "slots": [],
+                    "samples": [
+                        "go one indent level up",
+                        "indent right",
+                        "take an indent",
+                        "place a tab",
+                        "add a tab",
+                        "add an indent"
+                    ]
+                },
+                {
+                    "name": "RemoveIndentIntent",
+                    "slots": [],
+                    "samples": [
+                        "go one indent level down",
+                        "indent left",
+                        "take one step back",
+                        "remove one indent"
+                    ]
+                },
+                {
                     "name": "ListAppendIntent",
                     "slots": [
                         {
@@ -159,7 +177,48 @@
                     ]
                 },
                 {
-                    "name": "CreateWhileLoopIntent",
+                    "name": "NewIfBlockIntent",
+                    "slots": [
+                        {
+                            "name": "operator",
+                            "type": "operator_type"
+                        },
+                        {
+                            "name": "first_variable",
+                            "type": "variable_type"
+                        },
+                        {
+                            "name": "second_variable",
+                            "type": "variable_type"
+                        }
+                    ],
+                    "samples": [
+                        "tell wether {first_variable} {operator} {second_variable}",
+                        "check if {first_variable} {operator} {second_variable}"
+                    ]
+                },
+                {
+                    "name": "AddItemInDictionaryIntent",
+                    "slots": [
+                        {
+                            "name": "dictionary_name",
+                            "type": "variable_type"
+                        },
+                        {
+                            "name": "key_name",
+                            "type": "string_value_type"
+                        },
+                        {
+                            "name": "value_name",
+                            "type": "string_value_type"
+                        }
+                    ],
+                    "samples": [
+                        "in dictionary {dictionary_name} add {key_name} mapping to {value_name}"
+                    ]
+                },
+                {
+                    "name": "NewElIfBlockIntent",
                     "slots": [
                         {
                             "name": "first_variable",
@@ -175,25 +234,116 @@
                         }
                     ],
                     "samples": [
-                        "While loop until {first_variable} {operator} {second_variable}",
-                        "While loop till {first_variable} {operator} {second_variable}",
-                        "Check {first_variable} {operator} {second_variable} in a while loop",
-                        "Add while loop checking {first_variable} {operator} {second_variable}",
-                        "Add a while loop with {first_variable} {operator} {second_variable}",
-                        "Create while loop with condition {first_variable} {operator} {second_variable}",
-                        "Create a while loop checking {first_variable} {operator} {second_variable}"
+                        "otherwise check if {first_variable} {operator} {second_variable}"
                     ]
                 },
                 {
-                    "name": "ExecuteCodeIntent",
+                    "name": "PrintStatementIntent",
+                    "slots": [
+                        {
+                            "name": "print_statement",
+                            "type": "string_value_type"
+                        }
+                    ],
+                    "samples": [
+                        "display {print_statement}",
+                        "write on console {print_statement}",
+                        "{print_statement} should be displayed",
+                        "now display {print_statement}",
+                        "now output {print_statement} to console",
+                        "print {print_statement}"
+                    ]
+                },
+                {
+                    "name": "AddCommentIntent",
+                    "slots": [
+                        {
+                            "name": "comment_string",
+                            "type": "string_value_type"
+                        }
+                    ],
+                    "samples": [
+                        "add comment {comment_string}",
+                        "put comment {comment_string}",
+                        "comment {comment_string}",
+                        "write a comment {comment_string}"
+                    ]
+                },
+                {
+                    "name": "ChangeItemAtIndexIntent",
+                    "slots": [
+                        {
+                            "name": "first_variable",
+                            "type": "variable_type"
+                        },
+                        {
+                            "name": "index_value",
+                            "type": "AMAZON.NUMBER"
+                        },
+                        {
+                            "name": "second_variable",
+                            "type": "variable_type"
+                        }
+                    ],
+                    "samples": [
+                        "change item of {first_variable} with {second_variable} at index {index_value}",
+                        "in list {first_variable} replace index {index_value} with {second_variable}"
+                    ]
+                },
+                {
+                    "name": "RemoveItemIntent",
+                    "slots": [
+                        {
+                            "name": "first_variable",
+                            "type": "variable_type"
+                        },
+                        {
+                            "name": "second_variable",
+                            "type": "variable_type"
+                        }
+                    ],
+                    "samples": [
+                        "remove {second_variable} from list {first_variable}",
+                        "in list {first_variable} remove {second_variable}"
+                    ]
+                },
+                {
+                    "name": "NewElseBlockIntent",
                     "slots": [],
                     "samples": [
-                        "Run this code for me",
-                        "Give me the results of this code",
-                        "Give the output of current code",
-                        "Run the current code",
-                        "Execute it",
-                        "Execute the current code"
+                        "otherwise do this",
+                        "else do this"
+                    ]
+                },
+                {
+                    "name": "JoiningTwoListIntent",
+                    "slots": [
+                        {
+                            "name": "second_variable",
+                            "type": "variable_type"
+                        },
+                        {
+                            "name": "first_variable",
+                            "type": "variable_type"
+                        }
+                    ],
+                    "samples": [
+                        "join list {second_variable} at the end of list {first_variable}",
+                        "join list {second_variable} with list {first_variable}"
+                    ]
+                },
+                {
+                    "name": "SortingListIntent",
+                    "slots": [
+                        {
+                            "name": "first_variable",
+                            "type": "variable_type"
+                        }
+                    ],
+                    "samples": [
+                        "get list {first_variable} sorted",
+                        "sort list {first_variable}",
+                        "sort the list named {first_variable}"
                     ]
                 }
             ],
@@ -203,7 +353,57 @@
                     "values": [
                         {
                             "name": {
-                                "value": "ouput"
+                                "value": "ten"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "nine"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "eight"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "seven"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "six"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "five"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "four"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "three"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "two"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "one"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "output"
                             }
                         },
                         {
@@ -248,6 +448,31 @@
                     "values": [
                         {
                             "name": {
+                                "value": "four"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "five"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "three"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "two"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "one"
+                            }
+                        },
+                        {
+                            "name": {
                                 "value": "Python Sucks"
                             }
                         },
@@ -262,39 +487,27 @@
                     "name": "operator_type",
                     "values": [
                         {
+                            "id": "2",
+                            "name": {
+                                "value": "is same as"
+                            }
+                        },
+                        {
                             "id": "4",
                             "name": {
-                                "value": "not equal to",
-                                "synonyms": [
-                                    "is not equal to"
-                                ]
+                                "value": "not equal to"
                             }
                         },
                         {
                             "id": "3",
                             "name": {
-                                "value": "less than",
-                                "synonyms": [
-                                    "is less than"
-                                ]
-                            }
-                        },
-                        {
-                            "id": "2",
-                            "name": {
-                                "value": "equal to",
-                                "synonyms": [
-                                    "is equal to"
-                                ]
+                                "value": "less than "
                             }
                         },
                         {
                             "id": "1",
                             "name": {
-                                "value": "greater than",
-                                "synonyms": [
-                                    "is greater than"
-                                ]
+                                "value": "greater than"
                             }
                         }
                     ]
