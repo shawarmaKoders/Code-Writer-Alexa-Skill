@@ -195,6 +195,27 @@
                         "Execute it",
                         "Execute the current code"
                     ]
+                }},
+                {
+                    "name": "ChangeItemAtIndexIntent",
+                    "slots": [
+                        {
+                            "name": "first_variable",
+                            "type": "variable_type"
+                        },
+                        {
+                            "name": "index_value",
+                            "type": "AMAZON.NUMBER"
+                        },
+                        {
+                            "name": "second_variable",
+                            "type": "variable_type"
+                        }
+                    ],
+                    "samples": [
+                        "change item of {first_variable} with {second_variable} at index {index_value}",
+                        "in list {first_variable} replace index {index_value} with {second_variable}"
+                    ]
                 }
             ],
             "types": [
