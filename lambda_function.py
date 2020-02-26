@@ -693,6 +693,59 @@ class DisplayVariableIntentHandler(AbstractRequestHandler):
             SimpleCard(SKILL_NAME, output))
         return handler_input.response_builder.response
 
+
+class AddCommentIntentHandler(AbstractRequestHandler):
+    """Handler for comment statements."""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("AddCommentIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In AddCommentIntentHandler")
+
+        session_attributes = handler_input.attributes_manager.session_attributes
+        logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
+
+        string_value = None
+        variable_name = None
+        output = "New comment added"
+        output_speak = None
+        output_display = None
+
+        print_statement_slot_data = get_slot_data(handler_input, 'comment_string', logger=logger)
+
+        print_statement_string = print_statement_slot_data['value']
+        if print_statement_string is None:
+            logger.debug('No comment statement found')
+        else:
+            print_statement = print_statement_string
+
+        if print_statement is None:
+            output = "Unable to find comment statement"
+        else:
+            indent = get_indent(handler_input)
+            script_line = indent + "#{string_value}".format(string_value=print_statement)
+            try:
+                session_attributes['current_script_code'] += '\n'
+                session_attributes['current_script_code'] += script_line
+            except KeyError:
+                session_attributes['current_script_code'] = script_line
+
+            output_display = script_line
+            output_speak = 'New comment added <voice name="Kendra">{string_value},</voice> '.format(string_value=print_statement)
+            output = session_attributes['current_script_code']
+
+        # if output_display is None or output_speak is None:
+        #     output_display = output
+        #     output_speak = output
+
+        handler_input.response_builder.speak(output).set_card(
+            SimpleCard(SKILL_NAME, output))
+        return handler_input.response_builder.response
+
+
 # Make sure any new handlers or interceptors you've
 # defined are included below. The order matters - they're processed top to bottom.
 
@@ -705,6 +758,8 @@ sb.add_request_handler(CreateWhileLoopIntentHandler())
 sb.add_request_handler(NewStringIntentHandler())
 sb.add_request_handler(RemoveItemIntentHandler())
 sb.add_request_handler(ExecuteCodeIntentHandler())
+sb.add_request_handler(AddCommentIntentHandler())
+
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(SessionEndedRequestHandler())
