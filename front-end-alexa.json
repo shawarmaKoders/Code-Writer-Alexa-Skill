@@ -185,6 +185,23 @@
                     ]
                 },
                 {
+                    "name": "PrintStatementIntent",
+                    "slots": [
+                        {
+                            "name": "print_statement",
+                            "type": "string_value_type"
+                        }
+                    ],
+                    "samples": [
+                        "display {print_statement}",
+                        "write on console {print_statement}",
+                        "{print_statement} should be displayed",
+                        "now display {print_statement}",
+                        "now output {print_statement} to console",
+                        "print {print_statement}"
+                    ]
+                },
+                {
                     "name": "ExecuteCodeIntent",
                     "slots": [],
                     "samples": [
@@ -203,7 +220,7 @@
                     "values": [
                         {
                             "name": {
-                                "value": "ouput"
+                                "value": "output"
                             }
                         },
                         {
@@ -246,6 +263,31 @@
                 {
                     "name": "string_value_type",
                     "values": [
+                        {
+                            "name": {
+                                "value": "four"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "five"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "three"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "two"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "one"
+                            }
+                        },
                         {
                             "name": {
                                 "value": "Python Sucks"
