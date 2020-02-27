@@ -231,6 +231,23 @@
                      ]
                     },
                     {
+                    "name": "JoiningTwoListIntent",
+                    "slots": [
+                        {
+                            "name": "second_variable",
+                            "type": "variable_type"
+                        },
+                        {
+                            "name": "first_variable",
+                            "type": "variable_type"
+                        }
+                    ],
+                    "samples": [
+                        "join list {second_variable} at the end of list {first_variable}",
+                        "join list {second_variable} with list {first_variable}"
+                     ]
+                    },
+                    {
                     "name": "AddCommentIntent",
                     "slots": [
                         {
@@ -243,6 +260,55 @@
                         "put comment {comment_string}",
                         "comment {comment_string}",
                         "write a comment {comment_string}"
+                        ]
+                },
+                {
+                    "name": "NewIfBlockIntent",
+                    "slots": [
+                        {
+                            "name": "operator",
+                            "type": "operator_type"
+                        },
+                        {
+                            "name": "first_variable",
+                            "type": "variable_type"
+                        },
+                        {
+                            "name": "second_variable",
+                            "type": "variable_type"
+                        }
+                    ],
+                    "samples": [
+                        "tell wether {first_variable} {operator} {second_variable}",
+                        "check if {first_variable} {operator} {second_variable}"
+                    ]
+                },
+                {
+                    "name": "NewElIfBlockIntent",
+                    "slots": [
+                        {
+                            "name": "first_variable",
+                            "type": "variable_type"
+                        },
+                        {
+                            "name": "operator",
+                            "type": "operator_type"
+                        },
+                        {
+                            "name": "second_variable",
+                            "type": "variable_type"
+                        }
+                    ],
+                    "samples": [
+                        "otherwise check if {first_variable} {operator} {second_variable}"
+                    ]
+                },
+                {
+                    "name": "NewElseBlockIntent",
+                    "slots": [],
+                    "samples": [
+                        "otherwise do this",
+                        "else do this"
                     ]
                 }
             ],
