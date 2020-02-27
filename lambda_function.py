@@ -46,6 +46,8 @@ logger.setLevel(logging.DEBUG)
 
 
 def convert_to_variable_name(string):
+    if string is None:
+        return string
     return string.replace(' ', '_')
 
 
@@ -222,6 +224,8 @@ class CreateWhileLoopIntentHandler(AbstractRequestHandler):
             output += ' Second side of checking condition not provided.'
         else:
             indent = get_indent(handler_input)
+            first_variable = convert_to_variable_name(first_variable)
+            second_variable = convert_to_variable_name(second_variable)
             script_line = indent + f"while {first_variable} {operator} {second_variable}:"
             update_indent(handler_input, 1)
             try:
@@ -585,7 +589,7 @@ class NewIfBlockIntentHandler(AbstractRequestHandler):
         first_variable = get_slot_data(handler_input, 'first_variable', logger=logger)['value']
         second_variable = get_slot_data(handler_input, 'second_variable', logger=logger)['value']
         operator_slot_data = get_slot_data(handler_input, 'operator', logger=logger)
-        output=""
+        output = ""
         if operator_slot_data['value'] is None:
             logger.debug('{operator} not provided')
             output = 'Checking Condition is Not Provided.'
@@ -607,6 +611,8 @@ class NewIfBlockIntentHandler(AbstractRequestHandler):
             output += ' Second side of checking condition not provided.'
         else:
             indent = get_indent(handler_input)
+            first_variable = convert_to_variable_name(first_variable)
+            second_variable = convert_to_variable_name(second_variable)
             script_line = indent + f"if {first_variable} {operator} {second_variable}:"
             update_indent(handler_input, 1)
             try:
@@ -663,6 +669,8 @@ class NewElIfBlockIntentHandler(AbstractRequestHandler):
         else:
             update_indent(handler_input,-1)
             indent = get_indent(handler_input)
+            first_variable = convert_to_variable_name(first_variable)
+            second_variable = convert_to_variable_name(second_variable)
             script_line = indent + f"elif {first_variable} {operator} {second_variable}:"
             update_indent(handler_input, 1)
             try:

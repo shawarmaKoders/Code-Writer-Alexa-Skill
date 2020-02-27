@@ -353,6 +353,14 @@
                     "values": [
                         {
                             "name": {
+                                "value": "i",
+                                "synonyms": [
+                                    "eye"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
                                 "value": "output"
                             }
                         },
