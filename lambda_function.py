@@ -130,7 +130,7 @@ class NewIntegerIntentHandler(AbstractRequestHandler):
             output_display = script_line
             output_speak = '<voice name="Kendra">{variable_name},</voice> ' \
                            'is set!'.format(variable_name=variable_name_raw)
-            output = session_attributes['current_script_code']
+            output = script_line
 
         # if output_display is None or output_speak is None:
         #     output_display = output
@@ -173,10 +173,11 @@ class NewListIntentHandler(AbstractRequestHandler):
                 session_attributes['current_script_code'] += script_line
             except KeyError:
                 session_attributes['current_script_code'] = script_line
-            output = session_attributes['current_script_code']
+            output = script_line
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
+        handler_input.response_builder.set_should_end_session(False)
         return handler_input.response_builder.response
 
 
@@ -228,10 +229,11 @@ class CreateWhileLoopIntentHandler(AbstractRequestHandler):
                 session_attributes['current_script_code'] += script_line
             except KeyError:
                 session_attributes['current_script_code'] = script_line
-            output = session_attributes['current_script_code']
+            output = f"while {first_variable} {operator_slot_data['value']} {second_variable}"
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
+        handler_input.response_builder.set_should_end_session(False)
         return handler_input.response_builder.response
       
       
@@ -274,11 +276,13 @@ class ChangeItemAtIndexIntentHandler(AbstractRequestHandler):
             except KeyError:
                 session_attributes['current_script_code'] = script_line
 
-            output = session_attributes['current_script_code']
+            output = script_line
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
+        handler_input.response_builder.set_should_end_session(False)
         return handler_input.response_builder.response
+
 
 class ListAppendIntentHandler(AbstractRequestHandler):
     """Handler for List Append Intent"""
@@ -326,10 +330,11 @@ class ListAppendIntentHandler(AbstractRequestHandler):
             except KeyError:
                 session_attributes['current_script_code'] = script_line
 
-            output = session_attributes['current_script_code']
+            output = script_line
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
+        handler_input.response_builder.set_should_end_session(False)
         return handler_input.response_builder.response
 
 
@@ -371,11 +376,13 @@ class ForLoopIntentHandler(AbstractRequestHandler):
             except KeyError:
                 session_attributes['current_script_code'] = script_line
 
-            output = session_attributes['current_script_code']
+            output = script_line
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
+        handler_input.response_builder.set_should_end_session(False)
         return handler_input.response_builder.response
+
 
 class SortingListIntentHandler(AbstractRequestHandler):
     """Handler for sorting a list."""
@@ -397,7 +404,6 @@ class SortingListIntentHandler(AbstractRequestHandler):
         if first_variable is None:
             logger.debug('{first_variable} not provided')
         
-        
         if first_variable is None:
             output += ' List name not provided.'
         
@@ -410,10 +416,11 @@ class SortingListIntentHandler(AbstractRequestHandler):
             except KeyError:
                 session_attributes['current_script_code'] = script_line
                 
-            output = session_attributes['current_script_code']
+            output = script_line
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
+        handler_input.response_builder.set_should_end_session(False)
         return handler_input.response_builder.response
 
 
@@ -448,10 +455,11 @@ class JoiningTwoListIntentHandler(AbstractRequestHandler):
             except KeyError:
                 session_attributes['current_script_code'] = script_line
                 
-            output = session_attributes['current_script_code']
+            output = script_line
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
+        handler_input.response_builder.set_should_end_session(False)
         return handler_input.response_builder.response
 
 
@@ -494,10 +502,11 @@ class RemoveItemFromListIntentHandler(AbstractRequestHandler):
             except KeyError:
                 session_attributes['current_script_code'] = script_line
                 
-            output = session_attributes['current_script_code']
+            output = script_line
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
+        handler_input.response_builder.set_should_end_session(False)
         return handler_input.response_builder.response
 
 
@@ -539,6 +548,7 @@ class ExecuteCodeIntentHandler(AbstractRequestHandler):
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
+        handler_input.response_builder.set_should_end_session(False)
         return handler_input.response_builder.response
 
 
@@ -605,10 +615,11 @@ class NewIfBlockIntentHandler(AbstractRequestHandler):
             except KeyError:
                 session_attributes['current_script_code'] = script_line
                 
-            output = session_attributes['current_script_code']
+            output = f"if {first_variable} {operator_slot_data['value']} {second_variable}"
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
+        handler_input.response_builder.set_should_end_session(False)
         return handler_input.response_builder.response
 
 
@@ -660,10 +671,11 @@ class NewElIfBlockIntentHandler(AbstractRequestHandler):
             except KeyError:
                 session_attributes['current_script_code'] = script_line
                 
-            output = session_attributes['current_script_code']
+            output = f"elif {first_variable} {operator_slot_data['value']} {second_variable}"
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
+        handler_input.response_builder.set_should_end_session(False)
         return handler_input.response_builder.response
 
 
@@ -692,10 +704,11 @@ class NewElseBlockIntentHandler(AbstractRequestHandler):
         except KeyError:
             session_attributes['current_script_code'] = script_line
                 
-            output = session_attributes['current_script_code']
+            output = script_line
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
+        handler_input.response_builder.set_should_end_session(False)
         return handler_input.response_builder.response
 
 
@@ -844,7 +857,7 @@ class NewStringIntentHandler(AbstractRequestHandler):
             output_display = script_line
             output_speak = '<voice name="Kendra">{variable_name},</voice> ' \
                            'is set!'.format(variable_name=variable_name_raw)
-            output = session_attributes['current_script_code']
+            output = script_line
 
         # if output_display is None or output_speak is None:
         #     output_display = output
@@ -852,6 +865,7 @@ class NewStringIntentHandler(AbstractRequestHandler):
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
+        handler_input.response_builder.set_should_end_session(False)
         return handler_input.response_builder.response
 
 
@@ -891,7 +905,7 @@ class PrintStatementIntentHandler(AbstractRequestHandler):
                 session_attributes['current_script_code'] = script_line
 
             output_speak = 'Would print <voice name="Kendra">{string_value},</voice> '.format(string_value=print_statement)
-            output = session_attributes['current_script_code']
+            output = script_line
 
         # if output_display is None or output_speak is None:
         #     output_display = output
@@ -899,6 +913,7 @@ class PrintStatementIntentHandler(AbstractRequestHandler):
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
+        handler_input.response_builder.set_should_end_session(False)
         return handler_input.response_builder.response
 
 
@@ -916,7 +931,7 @@ class DisplayVariableIntentHandler(AbstractRequestHandler):
         session_attributes = handler_input.attributes_manager.session_attributes
         logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
 
-        print_statement = None
+        print_statement_variable = None
 
         print_statement_slot_data = get_slot_data(handler_input, 'variable_name', logger=logger)
 
@@ -924,21 +939,24 @@ class DisplayVariableIntentHandler(AbstractRequestHandler):
         if print_statement_string is None:
             logger.debug('No variable supplied to print')
         else:
-            print_statement = print_statement_string
+            print_statement_variable = convert_to_variable_name(print_statement_string)
 
-        if print_statement is None:
+        if print_statement_variable is None:
             output = "No matching variable found to print. Please supply correct variable to print"
         else:
             indent = get_indent(handler_input)
-            script_line = indent + "print({string_value})".format(string_value=print_statement)
+            script_line = indent + "print({string_value})".format(string_value=print_statement_variable)
             try:
                 session_attributes['current_script_code'] += '\n'
                 session_attributes['current_script_code'] += script_line
             except KeyError:
                 session_attributes['current_script_code'] = script_line
 
-            output_speak = 'Added print statement for variable <voice name="Kendra">{string_value},</voice> '.format(string_value=print_statement)
-            output = session_attributes['current_script_code']
+            output_speak = 'Added print statement for variable ' \
+                           '<voice name="Kendra">' \
+                           '{string_value},' \
+                           '</voice> '.format(string_value=print_statement_variable)
+            output = script_line
 
         # if output_display is None or output_speak is None:
         #     output_display = output
@@ -946,6 +964,7 @@ class DisplayVariableIntentHandler(AbstractRequestHandler):
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
+        handler_input.response_builder.set_should_end_session(False)
         return handler_input.response_builder.response
 
 
@@ -985,7 +1004,7 @@ class AddCommentIntentHandler(AbstractRequestHandler):
                 session_attributes['current_script_code'] = script_line
 
             output_speak = 'New comment added <voice name="Kendra">{string_value},</voice> '.format(string_value=print_statement)
-            output = session_attributes['current_script_code']
+            output = script_line
 
         # if output_display is None or output_speak is None:
         #     output_display = output
@@ -993,6 +1012,7 @@ class AddCommentIntentHandler(AbstractRequestHandler):
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
+        handler_input.response_builder.set_should_end_session(False)
         return handler_input.response_builder.response
 
 
