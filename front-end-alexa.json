@@ -212,6 +212,21 @@
                         "Execute it",
                         "Execute the current code"
                     ]
+                },
+                {
+                    "name": "AddCommentIntent",
+                    "slots": [
+                        {
+                            "name": "comment_string",
+                            "type": "string_value_type"
+                        }
+                    ],
+                    "samples": [
+                        "add comment {comment_string}",
+                        "put comment {comment_string}",
+                        "comment {comment_string}",
+                        "write a comment {comment_string}"
+                    ]
                 }
             ],
             "types": [
