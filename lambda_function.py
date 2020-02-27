@@ -561,7 +561,7 @@ class DecreaseIndentIntentHandler(AbstractRequestHandler):
 
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
-        return is_intent_name("DecreaseIndent")(handler_input)
+        return is_intent_name("DecreaseIndentIntent")(handler_input)
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
