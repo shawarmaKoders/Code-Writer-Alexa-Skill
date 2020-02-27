@@ -331,6 +331,20 @@
                         "otherwise do this",
                         "else do this"
                     ]
+                },
+                {
+                    "name": "SortingListIntent",
+                    "slots": [
+                        {
+                            "name": "first_variable",
+                            "type": "variable_type"
+                        }
+                    ],
+                    "samples": [
+                        "get list {first_variable} sorted",
+                        "sort list {first_variable}",
+                        "sort the list named {first_variable}"
+                    ]
                 }
             ],
             "types": [

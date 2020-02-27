@@ -377,6 +377,45 @@ class ForLoopIntentHandler(AbstractRequestHandler):
             SimpleCard(SKILL_NAME, output))
         return handler_input.response_builder.response
 
+class SortingListIntentHandler(AbstractRequestHandler):
+    """Handler for sorting a list."""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("SortingListIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In SortingListIntentHandler")
+
+        session_attributes = handler_input.attributes_manager.session_attributes
+        logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
+        
+        first_variable = get_slot_data(handler_input, 'first_variable', logger=logger)['value']
+        
+        output=""          
+        if first_variable is None:
+            logger.debug('{first_variable} not provided')
+        
+        
+        if first_variable is None:
+            output += ' List name not provided.'
+        
+        else:
+            
+            script_line = f"{first_variable}.sort()"
+            try:
+                session_attributes['current_script_code'] += '\n'
+                session_attributes['current_script_code'] += script_line
+            except KeyError:
+                session_attributes['current_script_code'] = script_line
+                
+            output = session_attributes['current_script_code']
+
+        handler_input.response_builder.speak(output).set_card(
+            SimpleCard(SKILL_NAME, output))
+        return handler_input.response_builder.response
+
 
 class JoiningTwoListIntentHandler(AbstractRequestHandler):
     """Handler for joining two list."""
@@ -977,6 +1016,7 @@ sb.add_request_handler(ListAppendIntentHandler())
 sb.add_request_handler(ForLoopIntentHandler())
 sb.add_request_handler(CreateWhileLoopIntentHandler())
 sb.add_request_handler(NewStringIntentHandler())
+sb.add_request_handler(SortingListIntentHandler())
 sb.add_request_handler(RemoveItemFromListIntentHandler())
 sb.add_request_handler(JoiningTwoListIntentHandler())
 sb.add_request_handler(ExecuteCodeIntentHandler())
