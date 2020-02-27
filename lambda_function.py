@@ -388,6 +388,7 @@ class HelpIntentHandler(AbstractRequestHandler):
             HELP_REPROMPT).set_card(SimpleCard(SKILL_NAME, HELP_MESSAGE))
         return handler_input.response_builder.response
 
+
 class NewIfBlockIntentHandler(AbstractRequestHandler):
     """Handler for New If Block."""
 
@@ -442,7 +443,6 @@ class NewIfBlockIntentHandler(AbstractRequestHandler):
         return handler_input.response_builder.response
 
 
-
 class NewElIfBlockIntentHandler(AbstractRequestHandler):
     """Handler for New ElIf Block."""
 
@@ -457,7 +457,6 @@ class NewElIfBlockIntentHandler(AbstractRequestHandler):
         session_attributes = handler_input.attributes_manager.session_attributes
         logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
 
-        
         first_variable = get_slot_data(handler_input, 'first_variable', logger=logger)['value']
         second_variable = get_slot_data(handler_input, 'second_variable', logger=logger)['value']
         operator_slot_data = get_slot_data(handler_input, 'operator', logger=logger)
@@ -529,9 +528,6 @@ class NewElseBlockIntentHandler(AbstractRequestHandler):
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
         return handler_input.response_builder.response
-
-
-
 
 
 class CancelOrStopIntentHandler(AbstractRequestHandler):
