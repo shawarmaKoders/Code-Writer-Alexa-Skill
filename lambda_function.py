@@ -454,6 +454,7 @@ class JoiningTwoListIntentHandler(AbstractRequestHandler):
             SimpleCard(SKILL_NAME, output))
         return handler_input.response_builder.response
 
+
 class RemoveItemFromListIntentHandler(AbstractRequestHandler):
     """Handler for removing an item from list."""
 
@@ -471,7 +472,7 @@ class RemoveItemFromListIntentHandler(AbstractRequestHandler):
         first_variable = get_slot_data(handler_input, 'first_variable', logger=logger)['value']
         second_variable = get_slot_data(handler_input, 'second_variable', logger=logger)['value']
         
-        output=""
+        output = ""
                  
         if first_variable is None:
             logger.debug('{first_variable} not provided')
@@ -494,6 +495,11 @@ class RemoveItemFromListIntentHandler(AbstractRequestHandler):
                 session_attributes['current_script_code'] = script_line
                 
             output = session_attributes['current_script_code']
+
+        handler_input.response_builder.speak(output).set_card(
+            SimpleCard(SKILL_NAME, output))
+        return handler_input.response_builder.response
+
 
 class ExecuteCodeIntentHandler(AbstractRequestHandler):
     """Handler for Executing code through external API"""
@@ -534,7 +540,6 @@ class ExecuteCodeIntentHandler(AbstractRequestHandler):
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
         return handler_input.response_builder.response
-
 
 
 class HelpIntentHandler(AbstractRequestHandler):
@@ -864,11 +869,7 @@ class PrintStatementIntentHandler(AbstractRequestHandler):
         session_attributes = handler_input.attributes_manager.session_attributes
         logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
 
-        string_value = None
-        variable_name = None
-        output = "Print Command Written"
-        output_speak = None
-        output_display = None
+        print_statement = None
 
         print_statement_slot_data = get_slot_data(handler_input, 'print_statement', logger=logger)
 
@@ -889,7 +890,6 @@ class PrintStatementIntentHandler(AbstractRequestHandler):
             except KeyError:
                 session_attributes['current_script_code'] = script_line
 
-            output_display = script_line
             output_speak = 'Would print <voice name="Kendra">{string_value},</voice> '.format(string_value=print_statement)
             output = session_attributes['current_script_code']
 
@@ -916,11 +916,7 @@ class DisplayVariableIntentHandler(AbstractRequestHandler):
         session_attributes = handler_input.attributes_manager.session_attributes
         logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
 
-        string_value = None
-        variable_name = None
-        output = "Value of variable displayed"
-        output_speak = None
-        output_display = None
+        print_statement = None
 
         print_statement_slot_data = get_slot_data(handler_input, 'variable_name', logger=logger)
 
@@ -941,7 +937,6 @@ class DisplayVariableIntentHandler(AbstractRequestHandler):
             except KeyError:
                 session_attributes['current_script_code'] = script_line
 
-            output_display = script_line
             output_speak = 'Added print statement for variable <voice name="Kendra">{string_value},</voice> '.format(string_value=print_statement)
             output = session_attributes['current_script_code']
 
@@ -968,11 +963,7 @@ class AddCommentIntentHandler(AbstractRequestHandler):
         session_attributes = handler_input.attributes_manager.session_attributes
         logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
 
-        string_value = None
-        variable_name = None
-        output = "New comment added"
-        output_speak = None
-        output_display = None
+        print_statement = None
 
         print_statement_slot_data = get_slot_data(handler_input, 'comment_string', logger=logger)
 
@@ -986,14 +977,13 @@ class AddCommentIntentHandler(AbstractRequestHandler):
             output = "Unable to find comment statement"
         else:
             indent = get_indent(handler_input)
-            script_line = indent + "#{string_value}".format(string_value=print_statement)
+            script_line = indent + "# {string_value}".format(string_value=print_statement)
             try:
                 session_attributes['current_script_code'] += '\n'
                 session_attributes['current_script_code'] += script_line
             except KeyError:
                 session_attributes['current_script_code'] = script_line
 
-            output_display = script_line
             output_speak = 'New comment added <voice name="Kendra">{string_value},</voice> '.format(string_value=print_statement)
             output = session_attributes['current_script_code']
 
