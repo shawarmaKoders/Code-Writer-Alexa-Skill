@@ -345,6 +345,19 @@
                         "sort list {first_variable}",
                         "sort the list named {first_variable}"
                     ]
+                },
+                {
+                    "name": "DecreaseIndentIntent",
+                    "slots": [],
+                    "samples": [
+                        "go one indentation level down",
+                        "finish this loop block",
+                        "finish this if block",
+                        "come out of loop block",
+                        "come out of if block",
+                        "decrease indent by one",
+                        "go one level down"
+                    ]
                 }
             ],
             "types": [

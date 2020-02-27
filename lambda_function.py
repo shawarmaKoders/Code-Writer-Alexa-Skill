@@ -556,6 +556,33 @@ class ExecuteCodeIntentHandler(AbstractRequestHandler):
         return handler_input.response_builder.response
 
 
+class DecreaseIndentIntentHandler(AbstractRequestHandler):
+    """Handler for Decreasing Indent in Generated code by one"""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("DecreaseIndent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In DecreaseIndentIntentHandler")
+
+        session_attributes = handler_input.attributes_manager.session_attributes
+        logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
+
+        if len(get_indent(handler_input)) > 0:
+            update_indent(handler_input, -1)
+            output = "Indent decreased by one."
+        else:
+            output = "You aren't at higher indentation level to begin with. " \
+                     "Please continue by speaking code!"
+
+        handler_input.response_builder.speak(output).set_card(
+            SimpleCard(SKILL_NAME, output))
+        handler_input.response_builder.set_should_end_session(False)
+        return handler_input.response_builder.response
+
+
 class HelpIntentHandler(AbstractRequestHandler):
     """Handler for Help Intent."""
 
@@ -702,9 +729,9 @@ class NewElseBlockIntentHandler(AbstractRequestHandler):
         logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
        
         output=""
-        update_indent(handler_input,-1)
+        update_indent(handler_input, -1)
         indent = get_indent(handler_input)
-        script_line = indent + f"else :"
+        script_line = indent + "else:"
         update_indent(handler_input, 1)
         try:
             session_attributes['current_script_code'] += '\n'
@@ -1045,6 +1072,7 @@ sb.add_request_handler(DisplayVariableIntentHandler())
 sb.add_request_handler(NewIfBlockIntentHandler())
 sb.add_request_handler(NewElIfBlockIntentHandler())
 sb.add_request_handler(NewElseBlockIntentHandler())
+sb.add_request_handler(DecreaseIndentIntentHandler())
 
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
