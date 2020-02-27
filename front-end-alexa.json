@@ -247,7 +247,6 @@
                         "put comment {comment_string}",
                         "comment {comment_string}",
                         "write a comment {comment_string}"
-
                     ]
                 }
             ],
