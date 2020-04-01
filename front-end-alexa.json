@@ -145,7 +145,7 @@
                     "slots": [
                         {
                             "name": "list_value",
-                            "type": "string_value_type"
+                            "type": "variable_type"
                         },
                         {
                             "name": "variable_name",
@@ -228,9 +228,9 @@
                     "samples": [
                         "remove {second_variable} from list {first_variable}",
                         "in list {first_variable} remove {second_variable}"
-                     ]
-                    },
-                    {
+                    ]
+                },
+                {
                     "name": "ChangeItemAtIndexIntent",
                     "slots": [
                         {
@@ -249,9 +249,9 @@
                     "samples": [
                         "change item of {first_variable} with {second_variable} at index {index_value}",
                         "in list {first_variable} replace index {index_value} with {second_variable}"
-                        ]
+                    ]
                 },
-                    {
+                {
                     "name": "JoiningTwoListIntent",
                     "slots": [
                         {
@@ -266,9 +266,9 @@
                     "samples": [
                         "join list {second_variable} at the end of list {first_variable}",
                         "join list {second_variable} with list {first_variable}"
-                     ]
-                    },
-                    {
+                    ]
+                },
+                {
                     "name": "AddCommentIntent",
                     "slots": [
                         {
@@ -281,7 +281,7 @@
                         "put comment {comment_string}",
                         "comment {comment_string}",
                         "write a comment {comment_string}"
-                        ]
+                    ]
                 },
                 {
                     "name": "NewIfBlockIntent",
@@ -331,6 +331,33 @@
                         "otherwise do this",
                         "else do this"
                     ]
+                },
+                {
+                    "name": "SortingListIntent",
+                    "slots": [
+                        {
+                            "name": "first_variable",
+                            "type": "variable_type"
+                        }
+                    ],
+                    "samples": [
+                        "get list {first_variable} sorted",
+                        "sort list {first_variable}",
+                        "sort the list named {first_variable}"
+                    ]
+                },
+                {
+                    "name": "DecreaseIndentIntent",
+                    "slots": [],
+                    "samples": [
+                        "go one indentation level down",
+                        "finish this loop block",
+                        "finish this if block",
+                        "come out of loop block",
+                        "come out of if block",
+                        "decrease indent by one",
+                        "go one level down"
+                    ]
                 }
             ],
             "types": [
@@ -339,12 +366,23 @@
                     "values": [
                         {
                             "name": {
+                                "value": "i",
+                                "synonyms": [
+                                    "eye"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
                                 "value": "output"
                             }
                         },
                         {
                             "name": {
-                                "value": "sum"
+                                "value": "sum",
+                                "synonyms": [
+                                    "some"
+                                ]
                             }
                         },
                         {
