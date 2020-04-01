@@ -1148,13 +1148,13 @@ class DefineParameterIntentHandler(AbstractRequestHandler):
                 output = "Sorry ! the function cannot accept more parameters"
             elif no_parameters is 1:
                 if total_parameters is None:
-                    script_line +=f'def {function_name}({curr_parameter}):'
+                    script_line +=f'def {function_name}({curr_parameter}) : '
                 else:
                     lis=""
                     for x in total_parameters:
                         lis+=x
                         lis+=' , '
-                    script_line+=f'def {function_name}({lis}{curr_parameter}):'
+                    script_line+=f'def {function_name}({lis}{curr_parameter}) : '
                 update_indent(handler_input, 1)
                 try:
                     session_attributes['current_script_code'] += '\n'
