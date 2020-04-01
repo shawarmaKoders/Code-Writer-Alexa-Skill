@@ -1051,6 +1051,132 @@ class AddCommentIntentHandler(AbstractRequestHandler):
         return handler_input.response_builder.response
 
 
+class FunctionCreationIntentHandler(AbstractRequestHandler):
+    """Handler for defining functions."""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("FunctionCreationIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In FunctionCreationIntentHandler")
+
+        session_attributes = handler_input.attributes_manager.session_attributes
+        logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
+        
+        first_variable = int (get_slot_data(handler_input, 'number', logger=logger)['value'])
+        function = get_slot_data(handler_input, 'function_name', logger=logger)['value']
+        
+        output=""
+        logger.info('function value recieved: '+str(function))  
+        if function is None:
+            logger.debug('Function name not specified')
+            output += 'Function name not specified.'
+
+        if first_variable is None:
+            logger.debug('Number of parameters not provided')
+            output += 'Number of parameters not provided.'
+        
+        elif function is not None:
+            output=""
+            output_speak=""
+            indent = get_indent(handler_input)
+            script_line=indent
+            if first_variable != 0:
+                try:
+                    session_attributes['no_parameters'] = first_variable
+                    session_attributes['function_name'] = function
+                    session_attributes['parameter_list'] = None
+                    
+                except KeyError:
+                    session_attributes['no_parameters'] = first_variable
+                    session_attributes['function_name'] = function
+                    session_attributes['parameter_list'] = None
+
+                output = "Ok! Specify the first parameter "
+                output_speak = "Ok! Specify the first parameter "
+
+            else:
+               script_line+= f"def {function}() :"
+               output_speak = 'function created successfully'
+               update_indent(handler_input, 1)
+               output = script_line
+               try:
+                    session_attributes['current_script_code'] += '\n'
+                    session_attributes['current_script_code'] += script_line
+                    
+               except KeyError:
+                    session_attributes['current_script_code'] = script_line
+                
+
+        handler_input.response_builder.speak(output).set_card(
+            SimpleCard(SKILL_NAME, output))
+        handler_input.response_builder.set_should_end_session(False)
+        return handler_input.response_builder.response
+
+
+class DefineParameterIntentHandler(AbstractRequestHandler):
+    """Handler for defining functions."""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("DefineParameterIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In DefineParameterIntentHandler")
+
+        session_attributes = handler_input.attributes_manager.session_attributes
+        logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
+        function_name = session_attributes['function_name']
+        no_parameters = session_attributes['no_parameters']
+        total_parameters = session_attributes['parameter_list'] 
+        curr_parameter = get_slot_data(handler_input, 'variable_name', logger=logger)['value']
+        
+        output=""          
+        if curr_parameter is None:
+            logger.debug('function parameter not provided')
+        
+        if curr_parameter is None:
+            output += 'Parameter not provided.'
+        
+        else:
+            indent = get_indent(handler_input)
+            script_line=indent
+            if no_parameters is 0:
+                output = "Sorry ! the function cannot accept more parameters"
+            elif no_parameters is 1:
+                if total_parameters is None:
+                    script_line +=f'def {function_name}({curr_parameter}):'
+                else:
+                    lis=""
+                    for x in total_parameters:
+                        lis+=x
+                        lis+=' , '
+                    script_line+=f'def {function_name}({lis}{curr_parameter}):'
+                update_indent(handler_input, 1)
+                try:
+                    session_attributes['current_script_code'] += '\n'
+                    session_attributes['current_script_code'] += script_line
+                except KeyError:
+                    session_attributes['current_script_code'] = script_line
+                output = script_line
+                output_display = script_line
+            else:
+                if session_attributes['parameter_list'] == None:
+                    session_attributes['parameter_list']=[curr_parameter]
+                else:
+                    session_attributes['parameter_list'].append(curr_parameter)
+                session_attributes['no_parameters']-=1
+                output = "Fine, next parameter please."
+                output_display = "Fine, next parameter please"
+
+        handler_input.response_builder.speak(output).set_card(
+            SimpleCard(SKILL_NAME, output))
+        handler_input.response_builder.set_should_end_session(False)
+        return handler_input.response_builder.response
+
 # Make sure any new handlers or interceptors you've
 # defined are included below. The order matters - they're processed top to bottom.
 
@@ -1074,6 +1200,8 @@ sb.add_request_handler(NewElIfBlockIntentHandler())
 sb.add_request_handler(NewElseBlockIntentHandler())
 sb.add_request_handler(DecreaseIndentIntentHandler())
 
+sb.add_request_handler(FunctionCreationIntentHandler())
+sb.add_request_handler(DefineParameterIntentHandler())
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(SessionEndedRequestHandler())
