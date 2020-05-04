@@ -32,6 +32,7 @@
                         }
                     ],
                     "samples": [
+                        "create integer variable {variable_name} with value {integer_value}",
                         "create another integer varibale {variable_name} with value {integer_value}",
                         "initialize integer {variable_name} with {integer_value}",
                         "create an integer variable {variable_name} with value {integer_value}",
@@ -358,6 +359,62 @@
                         "decrease indent by one",
                         "go one level down"
                     ]
+                },
+                {
+                    "name": "FunctionCreationIntent",
+                    "slots": [
+                        {
+                            "name": "number",
+                            "type": "AMAZON.NUMBER",
+                            "samples": [
+                                "with {number}",
+                                "it should have {number} parameters",
+                                "with {number} parameters",
+                                "{number}",
+                                "function would have {number} parameters"
+                            ]
+                        },
+                        {
+                            "name": "function_name",
+                            "type": "variable_type",
+                            "samples": [
+                                "the name is {function_name} having {number} parameters",
+                                "it should be {function_name}",
+                                "{function_name}",
+                                "name it {function_name}",
+                                "the name of function would be {function_name}"
+                            ]
+                        }
+                    ],
+                    "samples": [
+                        "new function with name {function_name}",
+                        "write function {function_name}",
+                        "create function with {number} arguments",
+                        "create a function named {function_name} containing {number} argumetns",
+                        "new function {function_name} having {number} parameters",
+                        "declare a function {function_name} with {number} parameters",
+                        "new function {function_name} with {number} parameters",
+                        "create a function {function_name} with {number} parameters",
+                        "declare function with {number} parameters",
+                        "create a function"
+                    ]
+                },
+                {
+                    "name": "DefineParameterIntent",
+                    "slots": [
+                        {
+                            "name": "variable_name",
+                            "type": "variable_type"
+                        }
+                    ],
+                    "samples": [
+                        "next would be {variable_name}",
+                        "{variable_name} is next parameter",
+                        "{variable_name} would be next",
+                        "next is {variable_name}",
+                        "next parameter would be {variable_name}",
+                        "first parameter is {variable_name}"
+                    ]
                 }
             ],
             "types": [
@@ -530,6 +587,31 @@
                         "confirmation": "Confirm.Intent.1373190617736"
                     },
                     "slots": []
+                },
+                {
+                    "name": "FunctionCreationIntent",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "number",
+                            "type": "AMAZON.NUMBER",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.212541405180.1325916719769"
+                            }
+                        },
+                        {
+                            "name": "function_name",
+                            "type": "variable_type",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.411883240496.808422700481"
+                            }
+                        }
+                    ]
                 }
             ],
             "delegationStrategy": "ALWAYS"
@@ -545,6 +627,28 @@
                     {
                         "type": "PlainText",
                         "value": "Are you sure you want to delete everything?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.212541405180.1325916719769",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "how many parameters should the funtion have?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.411883240496.808422700481",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "please define a name for your function"
+                    },
+                    {
+                        "type": "PlainText",
+                        "value": "what should be the name of the function"
                     }
                 ]
             }
