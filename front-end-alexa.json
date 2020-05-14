@@ -415,6 +415,54 @@
                         "next parameter would be {variable_name}",
                         "first parameter is {variable_name}"
                     ]
+                },
+                {
+                    "name": "BinaryOperationIntent",
+                    "slots": [
+                        {
+                            "name": "firstvar",
+                            "type": "variable_type",
+                            "samples": [
+                                "{firstvar} should contain the final value",
+                                "The variable would be {firstvar}",
+                                "{firstvar}"
+                            ]
+                        },
+                        {
+                            "name": "secondvar",
+                            "type": "variable_type",
+                            "samples": [
+                                "it was {secondvar}",
+                                "first variable was {secondvar}"
+                            ]
+                        },
+                        {
+                            "name": "operation",
+                            "type": "binary_operator",
+                            "samples": [
+                                "{operation} should be performed between the variables",
+                                "{operation}",
+                                "do the {operation} operation",
+                                "perform {operation} "
+                            ]
+                        },
+                        {
+                            "name": "thirdvar",
+                            "type": "variable_type",
+                            "samples": [
+                                "it was {thirdvar}",
+                                "the variable was {thirdvar}"
+                            ]
+                        }
+                    ],
+                    "samples": [
+                        "value of {firstvar} equals {secondvar} {operation} {thirdvar}",
+                        "put {firstvar} equals {secondvar} {operation} {thirdvar}",
+                        "{secondvar} and {thirdvar} should be {operation}",
+                        "{operation} {secondvar} and {thirdvar} and put it into {firstvar}",
+                        "assign {firstvar} with {secondvar} {operation} {thirdvar}",
+                        "{operation} {secondvar} with {thirdvar}"
+                    ]
                 }
             ],
             "types": [
@@ -554,6 +602,59 @@
                             }
                         }
                     ]
+                },
+                {
+                    "name": "binary_operator",
+                    "values": [
+                        {
+                            "id": "**",
+                            "name": {
+                                "value": "exponent",
+                                "synonyms": [
+                                    "power"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "*",
+                            "name": {
+                                "value": "multiply",
+                                "synonyms": [
+                                    "multiples",
+                                    "multiple"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "/",
+                            "name": {
+                                "value": "divide",
+                                "synonyms": [
+                                    "divides"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "-",
+                            "name": {
+                                "value": "subtract",
+                                "synonyms": [
+                                    "decrease",
+                                    "minus"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "+",
+                            "name": {
+                                "value": "add",
+                                "synonyms": [
+                                    "sum",
+                                    "plus"
+                                ]
+                            }
+                        }
+                    ]
                 }
             ]
         },
@@ -612,6 +713,49 @@
                             }
                         }
                     ]
+                },
+                {
+                    "name": "BinaryOperationIntent",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "firstvar",
+                            "type": "variable_type",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1039205159077.929198106318"
+                            }
+                        },
+                        {
+                            "name": "secondvar",
+                            "type": "variable_type",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1039205159077.471627531306"
+                            }
+                        },
+                        {
+                            "name": "operation",
+                            "type": "binary_operator",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1039205159077.516803017228"
+                            }
+                        },
+                        {
+                            "name": "thirdvar",
+                            "type": "variable_type",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1039205159077.591270236972"
+                            }
+                        }
+                    ]
                 }
             ],
             "delegationStrategy": "ALWAYS"
@@ -649,6 +793,62 @@
                     {
                         "type": "PlainText",
                         "value": "what should be the name of the function"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.1039205159077.929198106318",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "which variable should hold the final value?"
+                    },
+                    {
+                        "type": "PlainText",
+                        "value": "where should I place the value after operation"
+                    },
+                    {
+                        "type": "PlainText",
+                        "value": "which variable the final value should be assigned ?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.1039205159077.516803017228",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Please repeat the operation to perform"
+                    },
+                    {
+                        "type": "PlainText",
+                        "value": "Please specify the operation to be perfomed"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.1039205159077.471627531306",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "what was the first variable again?"
+                    },
+                    {
+                        "type": "PlainText",
+                        "value": "Please repeat the first variable again"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.1039205159077.591270236972",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "please repeat the second variable"
+                    },
+                    {
+                        "type": "PlainText",
+                        "value": "what was the second variable again?"
                     }
                 ]
             }

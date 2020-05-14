@@ -1050,7 +1050,54 @@ class AddCommentIntentHandler(AbstractRequestHandler):
         handler_input.response_builder.set_should_end_session(False)
         return handler_input.response_builder.response
 
+      
+class BinaryOperationIntentHandler(AbstractRequestHandler):
+    """Handler for Binary operations."""
 
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("BinaryOperationIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In BinaryOperationIntentHandler")
+
+        session_attributes = handler_input.attributes_manager.session_attributes
+        logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
+        final_variable = get_slot_data(handler_input, 'firstvar', logger=logger)['value']
+        first_variable = get_slot_data(handler_input, 'secondvar', logger=logger)['value']
+        second_variable = get_slot_data(handler_input, 'thirdvar', logger=logger)['value']
+        operation = get_slot_data(handler_input, 'operation', logger=logger)['value_id']
+        output=""          
+        if first_variable is None:
+            logger.debug('first variable not proviede')
+            output += 'first variable not proviede.'
+        elif second_variable is None:
+            logger.debug('second variable not proviede')
+            output += 'second variable not provied'
+        elif final_variable is None:
+            logger.debug('FINAL variable not provied')
+            output += 'FINAL variable not provied.'
+        elif operation is None:
+            logger.debug('Operation not specified')
+            output += 'Operation not specified.'
+        else:
+            script_line=""
+            indent = get_indent(handler_input)
+            script_line=indent
+            script_line+=f"{final_variable} = {first_variable} {operation} {second_variable}"
+            try:
+                session_attributes['current_script_code'] += '\n'
+                session_attributes['current_script_code'] += script_line
+            except KeyError:
+                session_attributes['current_script_code'] = script_line
+            output = f"{final_variable} = {first_variable} {operation} {second_variable}"
+        handler_input.response_builder.speak(output).set_card(
+            SimpleCard(SKILL_NAME, output))
+        handler_input.response_builder.set_should_end_session(False)
+        return handler_input.response_builder.response 
+      
+      
 class FunctionCreationIntentHandler(AbstractRequestHandler):
     """Handler for defining functions."""
 
@@ -1109,7 +1156,6 @@ class FunctionCreationIntentHandler(AbstractRequestHandler):
                except KeyError:
                     session_attributes['current_script_code'] = script_line
                 
-
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
         handler_input.response_builder.set_should_end_session(False)
@@ -1205,6 +1251,7 @@ sb.add_request_handler(DefineParameterIntentHandler())
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(SessionEndedRequestHandler())
+sb.add_request_handler(BinaryOperationIntentHandler())
 # make sure IntentReflectorHandler is last so it doesn't override your custom intent handlers
 # sb.add_request_handler(IntentReflectorHandler())
 
