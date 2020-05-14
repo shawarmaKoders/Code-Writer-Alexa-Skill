@@ -69,7 +69,7 @@ def update_indent(handler_input, update_value: int):
 def update_state(handler_input):
     session_attributes = handler_input.attributes_manager.session_attributes
     new_undo_state = session_attributes['previous_states'][1:]
-    new_undo_state.insert(0, session_attributes)
+    new_undo_state.append(session_attributes)
     session_attributes['previous_states'] = new_undo_state
     return session_attributes
 
