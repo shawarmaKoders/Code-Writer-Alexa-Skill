@@ -463,6 +463,22 @@
                         "assign {firstvar} with {secondvar} {operation} {thirdvar}",
                         "{operation} {secondvar} with {thirdvar}"
                     ]
+                },
+                {
+                    "name": "UndoIntent",
+                    "slots": [],
+                    "samples": [
+                        "Please remove the previous line",
+                        "please undo the last line",
+                        "undo the previous line please",
+                        "remove the previous line",
+                        "undo the previous line",
+                        "can you undo that last one please",
+                        "remove the last line please",
+                        "remove the last line",
+                        "undo that last one",
+                        "can you undo that last one"
+                    ]
                 }
             ],
             "types": [
