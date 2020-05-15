@@ -67,10 +67,17 @@ def update_indent(handler_input, update_value: int):
 
 
 def update_state(handler_input):
+    print('UPDATING STATE ...')
     session_attributes = handler_input.attributes_manager.session_attributes
     new_undo_state = session_attributes['previous_states'][1:]
-    new_undo_state.append(session_attributes)
+    prev_state = {'indentation_level': session_attributes['indentation_level']}
+    if 'current_script_code' in session_attributes:
+        prev_state['current_script_code'] = session_attributes['current_script_code']
+    print(f'prev state: {prev_state}')
+    new_undo_state.append(prev_state)
+    print(f'new_undo_state: {new_undo_state}')
     session_attributes['previous_states'] = new_undo_state
+    print(f'UPDATED SESSION ATTRIBUTES: {session_attributes}')
     return session_attributes
 
 
@@ -145,12 +152,11 @@ class NewIntegerIntentHandler(AbstractRequestHandler):
             output_speak = '<voice name="Kendra">{variable_name},</voice> ' \
                            'is set!'.format(variable_name=variable_name_raw)
             output = script_line
+            update_state(handler_input)
 
         # if output_display is None or output_speak is None:
         #     output_display = output
         #     output_speak = output
-
-        update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -191,7 +197,7 @@ class NewListIntentHandler(AbstractRequestHandler):
                 session_attributes['current_script_code'] = script_line
             output = script_line
 
-        update_state(handler_input)
+            update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -251,7 +257,7 @@ class CreateWhileLoopIntentHandler(AbstractRequestHandler):
                 session_attributes['current_script_code'] = script_line
             output = f"while {first_variable} {operator_slot_data['value']} {second_variable}"
 
-        update_state(handler_input)
+            update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -300,7 +306,7 @@ class ChangeItemAtIndexIntentHandler(AbstractRequestHandler):
 
             output = script_line
 
-        update_state(handler_input)
+            update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -356,7 +362,7 @@ class ListAppendIntentHandler(AbstractRequestHandler):
 
             output = script_line
 
-        update_state(handler_input)
+            update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -404,7 +410,7 @@ class ForLoopIntentHandler(AbstractRequestHandler):
 
             output = script_line
 
-        update_state(handler_input)
+            update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -446,7 +452,7 @@ class SortingListIntentHandler(AbstractRequestHandler):
 
             output = script_line
 
-        update_state(handler_input)
+            update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -487,7 +493,7 @@ class JoiningTwoListIntentHandler(AbstractRequestHandler):
 
             output = script_line
 
-        update_state(handler_input)
+            update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -536,7 +542,7 @@ class RemoveItemFromListIntentHandler(AbstractRequestHandler):
 
             output = script_line
 
-        update_state(handler_input)
+            update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -680,7 +686,7 @@ class NewIfBlockIntentHandler(AbstractRequestHandler):
 
             output = f"if {first_variable} {operator_slot_data['value']} {second_variable}"
 
-        update_state(handler_input)
+            update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -740,7 +746,7 @@ class NewElIfBlockIntentHandler(AbstractRequestHandler):
 
             output = f"elif {first_variable} {operator_slot_data['value']} {second_variable}"
 
-        update_state(handler_input)
+            update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -931,11 +937,11 @@ class NewStringIntentHandler(AbstractRequestHandler):
                            'is set!'.format(variable_name=variable_name_raw)
             output = script_line
 
+            update_state(handler_input)
+
         # if output_display is None or output_speak is None:
         #     output_display = output
         #     output_speak = output
-
-        update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -982,11 +988,11 @@ class PrintStatementIntentHandler(AbstractRequestHandler):
                 string_value=print_statement)
             output = script_line
 
+            update_state(handler_input)
+
         # if output_display is None or output_speak is None:
         #     output_display = output
         #     output_speak = output
-
-        update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -1035,11 +1041,11 @@ class DisplayVariableIntentHandler(AbstractRequestHandler):
                            '</voice> '.format(string_value=print_statement_variable)
             output = script_line
 
+            update_state(handler_input)
+
         # if output_display is None or output_speak is None:
         #     output_display = output
         #     output_speak = output
-
-        update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -1086,11 +1092,11 @@ class AddCommentIntentHandler(AbstractRequestHandler):
                 string_value=print_statement)
             output = script_line
 
+            update_state(handler_input)
+
         # if output_display is None or output_speak is None:
         #     output_display = output
         #     output_speak = output
-
-        update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -1140,7 +1146,7 @@ class BinaryOperationIntentHandler(AbstractRequestHandler):
                 session_attributes['current_script_code'] = script_line
             output = f"{final_variable} = {first_variable} {operation} {second_variable}"
 
-        update_state(handler_input)
+            update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -1206,7 +1212,7 @@ class FunctionCreationIntentHandler(AbstractRequestHandler):
                 except KeyError:
                     session_attributes['current_script_code'] = script_line
 
-        update_state(handler_input)
+            update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -1270,7 +1276,7 @@ class DefineParameterIntentHandler(AbstractRequestHandler):
                 output = "Fine, next parameter please."
                 output_display = "Fine, next parameter please"
 
-        update_state(handler_input)
+            update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -1292,24 +1298,28 @@ class UndoIntentHandler(AbstractRequestHandler):
         session_attributes = handler_input.attributes_manager.session_attributes
         logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
 
-        previous_states = session_attributes['previous_states']
-        if previous_states[0]:
-            if 'current_script_code' in session_attributes:
-                for state_pos in range(UNDO_STATE_DEPTH-1, -1):
-                    previous_state = previous_states[state_pos]
-                    if previous_state:
-                        session_attributes['undo_ed_states'][-1 - state_pos] = session_attributes
+        output = 'Placeholder Text'
+        previous_states = session_attributes['previous_states'][:]
+        try:
+            current_script_code_exists = session_attributes['current_script_code']
+            for state_pos in range(UNDO_STATE_DEPTH-1, -1, -1):
+                previous_state = previous_states[state_pos]
 
-                        session_attributes['current_script_code'] = previous_state['current_script_code']
-                        session_attributes['indentation_level'] = previous_state['indentation_level']
+                if previous_state is not None:
+                    session_attributes['undo_ed_states'][-1 - state_pos] = session_attributes
 
-                        previous_states[state_pos] = None
-                        output = 'The Last Line was scratched off. You can continue.'
-                        break
-            else:
-                output = 'There is no previous state to go to.'
-        else:
-            output = 'Sorry! Cannot undo any further'
+                    session_attributes['current_script_code'] = previous_state['current_script_code']
+                    session_attributes['indentation_level'] = previous_state['indentation_level']
+
+                    previous_states[state_pos] = None
+                    output = 'The Last Line was scratched off. You can continue.'
+                    break
+                elif state_pos == 0:
+                    output = 'Sorry! Cannot undo any further'
+        except:
+            output = 'There is no previous state to go to.'
+
+        session_attributes['previous_states'] = previous_states
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -1347,6 +1357,8 @@ sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(SessionEndedRequestHandler())
 sb.add_request_handler(BinaryOperationIntentHandler())
+sb.add_request_handler(UndoIntentHandler())
+
 # make sure IntentReflectorHandler is last so it doesn't override your custom intent handlers
 # sb.add_request_handler(IntentReflectorHandler())
 
