@@ -93,8 +93,10 @@ class LaunchRequestHandler(AbstractRequestHandler):
         logger.info("In LaunchRequestHandler")
         session_attributes = handler_input.attributes_manager.session_attributes
         session_attributes['indentation_level'] = 0
-        session_attributes['previous_states'] = [None] * UNDO_STATE_DEPTH
-        session_attributes['undo_ed_states'] = [None] * UNDO_STATE_DEPTH
+        session_attributes['current_script_code'] = ''
+        session_attributes['previous_states'] = [None] * (UNDO_STATE_DEPTH + 1)
+        update_state(handler_input)
+        # session_attributes['undo_ed_states'] = [None] * UNDO_STATE_DEPTH
         handler_input.response_builder.speak(WELCOME_MESSAGE).ask(HELP_MESSAGE)
         return handler_input.response_builder.response
 
@@ -1298,27 +1300,16 @@ class UndoIntentHandler(AbstractRequestHandler):
         session_attributes = handler_input.attributes_manager.session_attributes
         logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
 
-        output = 'Placeholder Text'
         previous_states = session_attributes['previous_states'][:]
-        try:
-            current_script_code_exists = session_attributes['current_script_code']
-            for state_pos in range(UNDO_STATE_DEPTH-1, -1, -1):
-                previous_state = previous_states[state_pos]
-
-                if previous_state is not None:
-                    session_attributes['undo_ed_states'][-1 - state_pos] = session_attributes
-
-                    session_attributes['current_script_code'] = previous_state['current_script_code']
-                    session_attributes['indentation_level'] = previous_state['indentation_level']
-
-                    previous_states[state_pos] = None
-                    output = 'The Last Line was scratched off. You can continue.'
-                    break
-                elif state_pos == 0:
-                    output = 'Sorry! Cannot undo any further'
-        except:
+        if previous_states[-1] is None:
             output = 'There is no previous state to go to.'
-
+        else:
+            previous_states = previous_states[:-1]
+            previous_states.insert(0, None)
+            prev_state = previous_states[-1]
+            session_attributes['indentation_level'] = prev_state['indentation_level']
+            session_attributes['current_script_code'] = prev_state['current_script_code']
+            output = 'That last one was scratched off! You can continue.'
         session_attributes['previous_states'] = previous_states
 
         handler_input.response_builder.speak(output).set_card(
