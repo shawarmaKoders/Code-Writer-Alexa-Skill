@@ -19,6 +19,8 @@ from ask_sdk_model import Response
 
 from api_utils import execute_code
 
+UNDO_STATE_DEPTH = 3
+
 operator_mapping = {
     1: '>',
     2: '==',
@@ -64,6 +66,21 @@ def update_indent(handler_input, update_value: int):
     return session_attributes['indentation_level']
 
 
+def update_state(handler_input):
+    print('UPDATING STATE ...')
+    session_attributes = handler_input.attributes_manager.session_attributes
+    new_undo_state = session_attributes['previous_states'][1:]
+    prev_state = {'indentation_level': session_attributes['indentation_level']}
+    if 'current_script_code' in session_attributes:
+        prev_state['current_script_code'] = session_attributes['current_script_code']
+    print(f'prev state: {prev_state}')
+    new_undo_state.append(prev_state)
+    print(f'new_undo_state: {new_undo_state}')
+    session_attributes['previous_states'] = new_undo_state
+    print(f'UPDATED SESSION ATTRIBUTES: {session_attributes}')
+    return session_attributes
+
+
 class LaunchRequestHandler(AbstractRequestHandler):
     """Handler for skill launch."""
 
@@ -76,6 +93,10 @@ class LaunchRequestHandler(AbstractRequestHandler):
         logger.info("In LaunchRequestHandler")
         session_attributes = handler_input.attributes_manager.session_attributes
         session_attributes['indentation_level'] = 0
+        session_attributes['current_script_code'] = ''
+        session_attributes['previous_states'] = [None] * (UNDO_STATE_DEPTH + 1)
+        update_state(handler_input)
+        # session_attributes['undo_ed_states'] = [None] * UNDO_STATE_DEPTH
         handler_input.response_builder.speak(WELCOME_MESSAGE).ask(HELP_MESSAGE)
         return handler_input.response_builder.response
 
@@ -133,6 +154,7 @@ class NewIntegerIntentHandler(AbstractRequestHandler):
             output_speak = '<voice name="Kendra">{variable_name},</voice> ' \
                            'is set!'.format(variable_name=variable_name_raw)
             output = script_line
+            update_state(handler_input)
 
         # if output_display is None or output_speak is None:
         #     output_display = output
@@ -176,6 +198,8 @@ class NewListIntentHandler(AbstractRequestHandler):
             except KeyError:
                 session_attributes['current_script_code'] = script_line
             output = script_line
+
+            update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -235,12 +259,14 @@ class CreateWhileLoopIntentHandler(AbstractRequestHandler):
                 session_attributes['current_script_code'] = script_line
             output = f"while {first_variable} {operator_slot_data['value']} {second_variable}"
 
+            update_state(handler_input)
+
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
         handler_input.response_builder.set_should_end_session(False)
         return handler_input.response_builder.response
-      
-      
+
+
 class ChangeItemAtIndexIntentHandler(AbstractRequestHandler):
     """Handler for changing item at index of list."""
 
@@ -258,9 +284,9 @@ class ChangeItemAtIndexIntentHandler(AbstractRequestHandler):
         first_variable = get_slot_data(handler_input, 'first_variable', logger=logger)['value']
         second_variable = get_slot_data(handler_input, 'second_variable', logger=logger)['value']
         index_value = get_slot_data(handler_input, 'index_value', logger=logger)['value']
-        output=""
+        output = ""
         if index_value is None:
-            logger.debug('{index_value} not provided')           
+            logger.debug('{index_value} not provided')
         if first_variable is None:
             logger.debug('{first_variable} not provided')
         if second_variable is None:
@@ -281,6 +307,8 @@ class ChangeItemAtIndexIntentHandler(AbstractRequestHandler):
                 session_attributes['current_script_code'] = script_line
 
             output = script_line
+
+            update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -327,7 +355,7 @@ class ListAppendIntentHandler(AbstractRequestHandler):
         else:
             script_line = "{variable_name}.append({list_value})".format(variable_name=variable_name,
                                                                         list_value=list_value)
-            
+
             try:
                 session_attributes['current_script_code'] += '\n'
                 session_attributes['current_script_code'] += script_line
@@ -335,6 +363,8 @@ class ListAppendIntentHandler(AbstractRequestHandler):
                 session_attributes['current_script_code'] = script_line
 
             output = script_line
+
+            update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -382,6 +412,8 @@ class ForLoopIntentHandler(AbstractRequestHandler):
 
             output = script_line
 
+            update_state(handler_input)
+
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
         handler_input.response_builder.set_should_end_session(False)
@@ -401,26 +433,28 @@ class SortingListIntentHandler(AbstractRequestHandler):
 
         session_attributes = handler_input.attributes_manager.session_attributes
         logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
-        
+
         first_variable = get_slot_data(handler_input, 'first_variable', logger=logger)['value']
-        
-        output=""          
+
+        output = ""
         if first_variable is None:
             logger.debug('{first_variable} not provided')
-        
+
         if first_variable is None:
             output += ' List name not provided.'
-        
+
         else:
-            
+
             script_line = f"{first_variable}.sort()"
             try:
                 session_attributes['current_script_code'] += '\n'
                 session_attributes['current_script_code'] += script_line
             except KeyError:
                 session_attributes['current_script_code'] = script_line
-                
+
             output = script_line
+
+            update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -441,10 +475,10 @@ class JoiningTwoListIntentHandler(AbstractRequestHandler):
 
         session_attributes = handler_input.attributes_manager.session_attributes
         logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
-        
+
         first_variable = get_slot_data(handler_input, 'first_variable', logger=logger)['value']
-        second_variable = get_slot_data(handler_input, 'second_variable', logger=logger)['value']       
-        output=""
+        second_variable = get_slot_data(handler_input, 'second_variable', logger=logger)['value']
+        output = ""
         if (first_variable is None) and (second_variable is None):
             output += 'List names not provided.'
         elif first_variable is None:
@@ -452,14 +486,16 @@ class JoiningTwoListIntentHandler(AbstractRequestHandler):
         elif second_variable is None:
             output += ' List-2 name not provided.'
         else:
-            script_line =f"{first_variable}.extend({second_variable})"
+            script_line = f"{first_variable}.extend({second_variable})"
             try:
                 session_attributes['current_script_code'] += '\n'
                 session_attributes['current_script_code'] += script_line
             except KeyError:
                 session_attributes['current_script_code'] = script_line
-                
+
             output = script_line
+
+            update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -480,33 +516,35 @@ class RemoveItemFromListIntentHandler(AbstractRequestHandler):
 
         session_attributes = handler_input.attributes_manager.session_attributes
         logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
-        
+
         first_variable = get_slot_data(handler_input, 'first_variable', logger=logger)['value']
         second_variable = get_slot_data(handler_input, 'second_variable', logger=logger)['value']
-        
+
         output = ""
-                 
+
         if first_variable is None:
             logger.debug('{first_variable} not provided')
         if second_variable is None:
             logger.debug('{second_variable} not provided')
 
-        if (first_variable is None) and (second_variable is None) :
+        if (first_variable is None) and (second_variable is None):
             output += 'Both List name and variable name to be removed not provided.'
         elif first_variable is None:
             output += ' List name not provided.'
         elif second_variable is None:
             output += ' variable which you want to remove not provided.'
         else:
-            
+
             script_line = f"{first_variable}.remove({second_variable})"
             try:
                 session_attributes['current_script_code'] += '\n'
                 session_attributes['current_script_code'] += script_line
             except KeyError:
                 session_attributes['current_script_code'] = script_line
-                
+
             output = script_line
+
+            update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -612,7 +650,7 @@ class NewIfBlockIntentHandler(AbstractRequestHandler):
 
         session_attributes = handler_input.attributes_manager.session_attributes
         logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
-        
+
         first_variable = get_slot_data(handler_input, 'first_variable', logger=logger)['value']
         second_variable = get_slot_data(handler_input, 'second_variable', logger=logger)['value']
         operator_slot_data = get_slot_data(handler_input, 'operator', logger=logger)
@@ -624,7 +662,7 @@ class NewIfBlockIntentHandler(AbstractRequestHandler):
         else:
             operator_id = int(operator_slot_data['value_id'])
             operator = operator_mapping[operator_id]
-        
+
         if first_variable is None:
             logger.debug('{first_variable} not provided')
         if second_variable is None:
@@ -647,8 +685,10 @@ class NewIfBlockIntentHandler(AbstractRequestHandler):
                 session_attributes['current_script_code'] += script_line
             except KeyError:
                 session_attributes['current_script_code'] = script_line
-                
+
             output = f"if {first_variable} {operator_slot_data['value']} {second_variable}"
+
+            update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -673,7 +713,7 @@ class NewElIfBlockIntentHandler(AbstractRequestHandler):
         first_variable = get_slot_data(handler_input, 'first_variable', logger=logger)['value']
         second_variable = get_slot_data(handler_input, 'second_variable', logger=logger)['value']
         operator_slot_data = get_slot_data(handler_input, 'operator', logger=logger)
-        output=""
+        output = ""
         if operator_slot_data['value'] is None:
             logger.debug('{operator} not provided')
             output = 'Checking Condition is Not Provided.'
@@ -681,7 +721,7 @@ class NewElIfBlockIntentHandler(AbstractRequestHandler):
         else:
             operator_id = int(operator_slot_data['value_id'])
             operator = operator_mapping[operator_id]
-        
+
         if first_variable is None:
             logger.debug('{first_variable} not provided')
         if second_variable is None:
@@ -694,7 +734,7 @@ class NewElIfBlockIntentHandler(AbstractRequestHandler):
         elif second_variable is None:
             output += ' Second side of checking condition not provided.'
         else:
-            update_indent(handler_input,-1)
+            update_indent(handler_input, -1)
             indent = get_indent(handler_input)
             first_variable = convert_to_variable_name(first_variable)
             second_variable = convert_to_variable_name(second_variable)
@@ -705,8 +745,10 @@ class NewElIfBlockIntentHandler(AbstractRequestHandler):
                 session_attributes['current_script_code'] += script_line
             except KeyError:
                 session_attributes['current_script_code'] = script_line
-                
+
             output = f"elif {first_variable} {operator_slot_data['value']} {second_variable}"
+
+            update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -727,8 +769,8 @@ class NewElseBlockIntentHandler(AbstractRequestHandler):
 
         session_attributes = handler_input.attributes_manager.session_attributes
         logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
-       
-        output=""
+
+        output = ""
         update_indent(handler_input, -1)
         indent = get_indent(handler_input)
         script_line = indent + "else:"
@@ -738,8 +780,10 @@ class NewElseBlockIntentHandler(AbstractRequestHandler):
             session_attributes['current_script_code'] += script_line
         except KeyError:
             session_attributes['current_script_code'] = script_line
-                
+
             output = script_line
+
+        update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -785,6 +829,7 @@ class IntentReflectorHandler(AbstractRequestHandler):
     for your intents by defining them above, then also adding them to the request
     handler chain below.
     """
+
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
         return is_request_type("IntentRequest")(handler_input)
@@ -894,6 +939,8 @@ class NewStringIntentHandler(AbstractRequestHandler):
                            'is set!'.format(variable_name=variable_name_raw)
             output = script_line
 
+            update_state(handler_input)
+
         # if output_display is None or output_speak is None:
         #     output_display = output
         #     output_speak = output
@@ -939,8 +986,11 @@ class PrintStatementIntentHandler(AbstractRequestHandler):
             except KeyError:
                 session_attributes['current_script_code'] = script_line
 
-            output_speak = 'Would print <voice name="Kendra">{string_value},</voice> '.format(string_value=print_statement)
+            output_speak = 'Would print <voice name="Kendra">{string_value},</voice> '.format(
+                string_value=print_statement)
             output = script_line
+
+            update_state(handler_input)
 
         # if output_display is None or output_speak is None:
         #     output_display = output
@@ -993,6 +1043,8 @@ class DisplayVariableIntentHandler(AbstractRequestHandler):
                            '</voice> '.format(string_value=print_statement_variable)
             output = script_line
 
+            update_state(handler_input)
+
         # if output_display is None or output_speak is None:
         #     output_display = output
         #     output_speak = output
@@ -1038,8 +1090,11 @@ class AddCommentIntentHandler(AbstractRequestHandler):
             except KeyError:
                 session_attributes['current_script_code'] = script_line
 
-            output_speak = 'New comment added <voice name="Kendra">{string_value},</voice> '.format(string_value=print_statement)
+            output_speak = 'New comment added <voice name="Kendra">{string_value},</voice> '.format(
+                string_value=print_statement)
             output = script_line
+
+            update_state(handler_input)
 
         # if output_display is None or output_speak is None:
         #     output_display = output
@@ -1050,7 +1105,7 @@ class AddCommentIntentHandler(AbstractRequestHandler):
         handler_input.response_builder.set_should_end_session(False)
         return handler_input.response_builder.response
 
-      
+
 class BinaryOperationIntentHandler(AbstractRequestHandler):
     """Handler for Binary operations."""
 
@@ -1068,7 +1123,7 @@ class BinaryOperationIntentHandler(AbstractRequestHandler):
         first_variable = get_slot_data(handler_input, 'secondvar', logger=logger)['value']
         second_variable = get_slot_data(handler_input, 'thirdvar', logger=logger)['value']
         operation = get_slot_data(handler_input, 'operation', logger=logger)['value_id']
-        output=""          
+        output = ""
         if first_variable is None:
             logger.debug('first variable not proviede')
             output += 'first variable not proviede.'
@@ -1082,22 +1137,25 @@ class BinaryOperationIntentHandler(AbstractRequestHandler):
             logger.debug('Operation not specified')
             output += 'Operation not specified.'
         else:
-            script_line=""
+            script_line = ""
             indent = get_indent(handler_input)
-            script_line=indent
-            script_line+=f"{final_variable} = {first_variable} {operation} {second_variable}"
+            script_line = indent
+            script_line += f"{final_variable} = {first_variable} {operation} {second_variable}"
             try:
                 session_attributes['current_script_code'] += '\n'
                 session_attributes['current_script_code'] += script_line
             except KeyError:
                 session_attributes['current_script_code'] = script_line
             output = f"{final_variable} = {first_variable} {operation} {second_variable}"
+
+            update_state(handler_input)
+
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
         handler_input.response_builder.set_should_end_session(False)
-        return handler_input.response_builder.response 
-      
-      
+        return handler_input.response_builder.response
+
+
 class FunctionCreationIntentHandler(AbstractRequestHandler):
     """Handler for defining functions."""
 
@@ -1111,12 +1169,12 @@ class FunctionCreationIntentHandler(AbstractRequestHandler):
 
         session_attributes = handler_input.attributes_manager.session_attributes
         logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
-        
-        first_variable = int (get_slot_data(handler_input, 'number', logger=logger)['value'])
+
+        first_variable = int(get_slot_data(handler_input, 'number', logger=logger)['value'])
         function = get_slot_data(handler_input, 'function_name', logger=logger)['value']
-        
-        output=""
-        logger.info('function value recieved: '+str(function))  
+
+        output = ""
+        logger.info('function value recieved: ' + str(function))
         if function is None:
             logger.debug('Function name not specified')
             output += 'Function name not specified.'
@@ -1124,18 +1182,18 @@ class FunctionCreationIntentHandler(AbstractRequestHandler):
         if first_variable is None:
             logger.debug('Number of parameters not provided')
             output += 'Number of parameters not provided.'
-        
+
         elif function is not None:
-            output=""
-            output_speak=""
+            output = ""
+            output_speak = ""
             indent = get_indent(handler_input)
-            script_line=indent
+            script_line = indent
             if first_variable != 0:
                 try:
                     session_attributes['no_parameters'] = first_variable
                     session_attributes['function_name'] = function
                     session_attributes['parameter_list'] = None
-                    
+
                 except KeyError:
                     session_attributes['no_parameters'] = first_variable
                     session_attributes['function_name'] = function
@@ -1145,17 +1203,19 @@ class FunctionCreationIntentHandler(AbstractRequestHandler):
                 output_speak = "Ok! Specify the first parameter "
 
             else:
-               script_line+= f"def {function}() :"
-               output_speak = 'function created successfully'
-               update_indent(handler_input, 1)
-               output = script_line
-               try:
+                script_line += f"def {function}() :"
+                output_speak = 'function created successfully'
+                update_indent(handler_input, 1)
+                output = script_line
+                try:
                     session_attributes['current_script_code'] += '\n'
                     session_attributes['current_script_code'] += script_line
-                    
-               except KeyError:
+
+                except KeyError:
                     session_attributes['current_script_code'] = script_line
-                
+
+            update_state(handler_input)
+
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
         handler_input.response_builder.set_should_end_session(False)
@@ -1177,30 +1237,30 @@ class DefineParameterIntentHandler(AbstractRequestHandler):
         logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
         function_name = session_attributes['function_name']
         no_parameters = session_attributes['no_parameters']
-        total_parameters = session_attributes['parameter_list'] 
+        total_parameters = session_attributes['parameter_list']
         curr_parameter = get_slot_data(handler_input, 'variable_name', logger=logger)['value']
-        
-        output=""          
+
+        output = ""
         if curr_parameter is None:
             logger.debug('function parameter not provided')
-        
+
         if curr_parameter is None:
             output += 'Parameter not provided.'
-        
+
         else:
             indent = get_indent(handler_input)
-            script_line=indent
+            script_line = indent
             if no_parameters is 0:
                 output = "Sorry ! the function cannot accept more parameters"
             elif no_parameters is 1:
                 if total_parameters is None:
-                    script_line +=f'def {function_name}({curr_parameter}) : '
+                    script_line += f'def {function_name}({curr_parameter}) : '
                 else:
-                    lis=""
+                    lis = ""
                     for x in total_parameters:
-                        lis+=x
-                        lis+=' , '
-                    script_line+=f'def {function_name}({lis}{curr_parameter}) : '
+                        lis += x
+                        lis += ' , '
+                    script_line += f'def {function_name}({lis}{curr_parameter}) : '
                 update_indent(handler_input, 1)
                 try:
                     session_attributes['current_script_code'] += '\n'
@@ -1210,21 +1270,57 @@ class DefineParameterIntentHandler(AbstractRequestHandler):
                 output = script_line
                 output_display = script_line
             else:
-                if session_attributes['parameter_list'] == None:
-                    session_attributes['parameter_list']=[curr_parameter]
+                if session_attributes['parameter_list'] is None:
+                    session_attributes['parameter_list'] = [curr_parameter]
                 else:
                     session_attributes['parameter_list'].append(curr_parameter)
-                session_attributes['no_parameters']-=1
+                session_attributes['no_parameters'] -= 1
                 output = "Fine, next parameter please."
                 output_display = "Fine, next parameter please"
+
+            update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
         handler_input.response_builder.set_should_end_session(False)
         return handler_input.response_builder.response
 
+
+class UndoIntentHandler(AbstractRequestHandler):
+    """Handler for Undo-ing to a previous state"""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("UndoIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In UndoIntentIntentHandler")
+
+        session_attributes = handler_input.attributes_manager.session_attributes
+        logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
+
+        previous_states = session_attributes['previous_states'][:]
+        if previous_states[-1] is None:
+            output = 'There is no previous state to go to.'
+        else:
+            previous_states = previous_states[:-1]
+            previous_states.insert(0, None)
+            prev_state = previous_states[-1]
+            session_attributes['indentation_level'] = prev_state['indentation_level']
+            session_attributes['current_script_code'] = prev_state['current_script_code']
+            output = 'That last one was scratched off! You can continue.'
+        session_attributes['previous_states'] = previous_states
+
+        handler_input.response_builder.speak(output).set_card(
+            SimpleCard(SKILL_NAME, output))
+        handler_input.response_builder.set_should_end_session(False)
+        return handler_input.response_builder.response
+
+
 # Make sure any new handlers or interceptors you've
 # defined are included below. The order matters - they're processed top to bottom.
+
 
 sb.add_request_handler(LaunchRequestHandler())
 sb.add_request_handler(NewIntegerIntentHandler())
@@ -1252,6 +1348,8 @@ sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(SessionEndedRequestHandler())
 sb.add_request_handler(BinaryOperationIntentHandler())
+sb.add_request_handler(UndoIntentHandler())
+
 # make sure IntentReflectorHandler is last so it doesn't override your custom intent handlers
 # sb.add_request_handler(IntentReflectorHandler())
 
