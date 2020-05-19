@@ -169,7 +169,8 @@ class NewListIntentHandler(AbstractRequestHandler):
         if variable_name is None:
             output = "I'm out of options for variable names. Please provide that for me next time."
         else:
-            script_line = "{variable_name} = []".format(variable_name=variable_name)
+            indent = get_indent(handler_input)
+            script_line = indent + "{variable_name} = []".format(variable_name=variable_name)
             try:
                 session_attributes['current_script_code'] += '\n'
                 session_attributes['current_script_code'] += script_line
@@ -273,7 +274,8 @@ class ChangeItemAtIndexIntentHandler(AbstractRequestHandler):
         elif second_variable is None:
             output += ' variable which you want to add not provided.'
         else:
-            script_line = f"{first_variable}[{index_value}]={second_variable}"
+            indent = get_indent(handler_input)
+            script_line = indent + f"{first_variable}[{index_value}]={second_variable}"
             try:
                 session_attributes['current_script_code'] += '\n'
                 session_attributes['current_script_code'] += script_line
@@ -325,7 +327,8 @@ class ListAppendIntentHandler(AbstractRequestHandler):
         elif variable_name is None:
             output = "I'm out of options for variable names. Please provide that for me next time."
         else:
-            script_line = "{variable_name}.append({list_value})".format(variable_name=variable_name,
+            indent = get_indent(handler_input)
+            script_line = indent +"{variable_name}.append({list_value})".format(variable_name=variable_name,
                                                                         list_value=list_value)
             
             try:
@@ -372,7 +375,7 @@ class ForLoopIntentHandler(AbstractRequestHandler):
             output = 'You have not defined ending point of the loop'
         else:
             indent = get_indent(handler_input)
-            script_line = indent + f"for i in range({starting_number}, {ending_number}+1):"
+            script_line = indent + f"for count in range({starting_number}, {ending_number}+1):"
             update_indent(handler_input, 1)
             try:
                 session_attributes['current_script_code'] += '\n'
@@ -412,8 +415,8 @@ class SortingListIntentHandler(AbstractRequestHandler):
             output += ' List name not provided.'
         
         else:
-            
-            script_line = f"{first_variable}.sort()"
+            indent = get_indent(handler_input)
+            script_line =indent+ f"{first_variable}.sort()"
             try:
                 session_attributes['current_script_code'] += '\n'
                 session_attributes['current_script_code'] += script_line
@@ -452,7 +455,8 @@ class JoiningTwoListIntentHandler(AbstractRequestHandler):
         elif second_variable is None:
             output += ' List-2 name not provided.'
         else:
-            script_line =f"{first_variable}.extend({second_variable})"
+            indent = get_indent(handler_input)
+            script_line =indent + f"{first_variable}.extend({second_variable})"
             try:
                 session_attributes['current_script_code'] += '\n'
                 session_attributes['current_script_code'] += script_line
@@ -498,8 +502,8 @@ class RemoveItemFromListIntentHandler(AbstractRequestHandler):
         elif second_variable is None:
             output += ' variable which you want to remove not provided.'
         else:
-            
-            script_line = f"{first_variable}.remove({second_variable})"
+            indent = get_indent(handler_input)
+            script_line = indent+ f"{first_variable}.remove({second_variable})"
             try:
                 session_attributes['current_script_code'] += '\n'
                 session_attributes['current_script_code'] += script_line
