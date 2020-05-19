@@ -86,14 +86,21 @@
                     "slots": [
                         {
                             "name": "starting_number",
-                            "type": "AMAZON.NUMBER"
+                            "type": "AMAZON.NUMBER",
+                            "samples": [
+                                "It should start at {starting_number}"
+                            ]
                         },
                         {
                             "name": "ending_number",
-                            "type": "AMAZON.NUMBER"
+                            "type": "AMAZON.NUMBER",
+                            "samples": [
+                                "the end should be at {ending_number}"
+                            ]
                         }
                     ],
                     "samples": [
+                        "create a for loop",
                         "Start a for loop from {starting_number} to {ending_number}",
                         "Start a loop from {starting_number} to {ending_number}",
                         "Create a for loop from {starting_number} to {ending_number}",
@@ -116,6 +123,18 @@
                         "Print {variable_name}",
                         "Show the value of {variable_name}",
                         "What's the value of {variable_name}"
+                    ]
+                },
+                {
+                    "name": "DeleteLineIntent",
+                    "slots": [],
+                    "samples": [
+                        "remove the previous line",
+                        "undo that for me",
+                        "delete that last one",
+                        "Clear the last line",
+                        "Delete the last line",
+                        "Remove the last line"
                     ]
                 },
                 {
@@ -478,6 +497,40 @@
                     "values": [
                         {
                             "name": {
+                                "value": "count"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "var2",
+                                "synonyms": [
+                                    "vartwo"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "j"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "list1",
+                                "synonyms": [
+                                    "listone"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "var1",
+                                "synonyms": [
+                                    "varone"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
                                 "value": "i",
                                 "synonyms": [
                                     "eye"
@@ -532,6 +585,16 @@
                 {
                     "name": "string_value_type",
                     "values": [
+                        {
+                            "name": {
+                                "value": "result"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "sum"
+                            }
+                        },
                         {
                             "name": {
                                 "value": "four"
@@ -613,6 +676,12 @@
                 {
                     "name": "binary_operator",
                     "values": [
+                        {
+                            "id": "%",
+                            "name": {
+                                "value": "percentile"
+                            }
+                        },
                         {
                             "id": "**",
                             "name": {
@@ -763,6 +832,31 @@
                             }
                         }
                     ]
+                },
+                {
+                    "name": "ForLoopIntent",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "starting_number",
+                            "type": "AMAZON.NUMBER",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.248692328566.1563917224568"
+                            }
+                        },
+                        {
+                            "name": "ending_number",
+                            "type": "AMAZON.NUMBER",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.248692328566.61313585424"
+                            }
+                        }
+                    ]
                 }
             ],
             "delegationStrategy": "ALWAYS"
@@ -856,6 +950,24 @@
                     {
                         "type": "PlainText",
                         "value": "what was the second variable again?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.248692328566.1563917224568",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "where should the for loop start"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.248692328566.61313585424",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "what should be the ending point"
                     }
                 ]
             }
