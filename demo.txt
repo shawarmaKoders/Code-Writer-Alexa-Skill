@@ -1,0 +1,44 @@
+x=25
+l=[]
+for i in range(1,x+1):
+    if x%i == 0:
+        if i != x/i:
+            l.append(i)
+            l.append(x/i)
+        else:
+            l.append(i)
+print(l)
+
+
+create integer variable  varone with value twenty five
+create  a new list listone
+create a for loop
+it should start from one
+the end should be at twenty five
+put vartwo equals varone percentile count
+put result equals varone divide count
+create integer variable sum with value zero
+check if vartwo equal to sum
+check if count not equal to result
+append count to list1
+append result to list1
+otherwise do this
+append count to list1
+go one indentation level down
+finish this if block
+come out of loop block
+
+
+
+var1 = 25
+list1 = []
+for count in range(1, 25+1):
+    var2 = var1 % count
+    result = var1 / count
+    sum = 0
+    if var2 == sum:
+        if count  result:
+            if count != result:
+            list1.append(count)\nlist1.append(result)\n\t\t\telse:\nlist1.append(count)\n\tprint(list1)
+
+

@@ -119,18 +119,6 @@
                     ]
                 },
                 {
-                    "name": "DeleteLineIntent",
-                    "slots": [],
-                    "samples": [
-                        "remove the previous line",
-                        "undo that for me",
-                        "delete that last one",
-                        "Clear the last line",
-                        "Delete the last line",
-                        "Remove the last line"
-                    ]
-                },
-                {
                     "name": "ClearCodeIntent",
                     "slots": [],
                     "samples": [
@@ -462,6 +450,25 @@
                         "{operation} {secondvar} and {thirdvar} and put it into {firstvar}",
                         "assign {firstvar} with {secondvar} {operation} {thirdvar}",
                         "{operation} {secondvar} with {thirdvar}"
+                    ]
+                },
+                {
+                    "name": "UndoIntent",
+                    "slots": [],
+                    "samples": [
+                        "clear the last command",
+                        "clear the previous command",
+                        "clear the last line",
+                        "Please remove the previous line",
+                        "please undo the last line",
+                        "undo the previous line please",
+                        "remove the previous line",
+                        "undo the previous line",
+                        "can you undo that last one please",
+                        "remove the last line please",
+                        "remove the last line",
+                        "undo that last one",
+                        "can you undo that last one"
                     ]
                 }
             ],
