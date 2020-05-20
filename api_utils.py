@@ -1,28 +1,30 @@
+import sys
+from io import StringIO
+import contextlib
 import requests
 
-gfg_url = 'https://ide.geeksforgeeks.org'
-api_url = f"{gfg_url}/main.php"
+
+@contextlib.contextmanager
+def stdoutIO(stdout=None):
+    old = sys.stdout
+    if stdout is None:
+        stdout = StringIO()
+    sys.stdout = stdout
+    yield stdout
+    sys.stdout = old
 
 
 def execute_code(code_string):
-    data = {
-        'lang': 'python3',
-        'code': code_string,
-        'input': '',
-        'save': True
-    }
+    paste = None
+    with stdoutIO() as s:
+        try:
+            exec(code_string)
+            res = requests.post(url='https://hastebin.com/documents', data=code_string)
+            paste = f"https://hastebin.com/{res.json()['key']}"
+        except:
+            print('ERROR_Z')
 
-    print("Code Input to API:", code_string)
-    response = requests.post(api_url, data=data)
-    response_data = response.json()
-    response_data['code_url'] = f"{gfg_url}/{response_data.pop('id')}"
-    response_data['has_compilation_error'] = len(response_data.pop('cmpError')) > 0
-    response_data['has_run_time_error'] = len(response_data.pop('rntError')) > 0
-
-    response_data.pop('hash')
-    response_data.pop('lxcOutput')
-
-    return response_data
+    return s.getvalue().strip(), paste
 
 
 if __name__ == '__main__':
