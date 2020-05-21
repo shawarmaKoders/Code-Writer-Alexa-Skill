@@ -573,11 +573,12 @@ class ExecuteCodeIntentHandler(AbstractRequestHandler):
 
         if 'current_script_code' in session_attributes:
             code_string = session_attributes['current_script_code']
-            code_string += '\nprint("It ran successfully!")'
+            code_string += '\nprint("Code Executed!")'
             code_result, url = execute_code(code_string)
             final_result = code_result
             if code_result == 'ERROR_Z':
                 output = "Your code has some errors. "
+                output += f"Here's the URL for your executed code: {url}"
             else:
                 output = f'Output for your code is, {code_result}'
                 output += f"Here's the URL for your executed code: {url}"
@@ -1442,6 +1443,174 @@ class DefineListItemIntentHandler(AbstractRequestHandler):
         handler_input.response_builder.set_should_end_session(False)
         return handler_input.response_builder.response
 
+class FunctionCallingIntentHandler(AbstractRequestHandler):
+    """Handler for calling a function with parameter dynamically."""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("FunctionCallingIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In FunctionCallingIntentHandler")
+
+        session_attributes = handler_input.attributes_manager.session_attributes
+        logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
+        
+        first_variable = int (get_slot_data(handler_input, 'number', logger=logger)['value'])
+        f_name = get_slot_data(handler_input, 'function_name', logger=logger)['value']
+        
+        output=""
+        logger.info('Function name received: '+ str(f_name))  
+        if f_name is None:
+            logger.debug('Function name not specified')
+            output += 'Function name not specified.'
+
+        if first_variable is None:
+            logger.debug('Number of Function parameters item not provided')
+            output += 'Number of Function parameters item not provided.'
+        
+        elif f_name is not None:
+            output=""
+            output_speak=""
+            indent = get_indent(handler_input)
+            script_line=indent
+            if first_variable != 0:
+                try:
+                    session_attributes['item_count'] = first_variable
+                    session_attributes['f_name'] = f_name
+                    session_attributes['item_list'] = None
+                    
+                except KeyError:
+                    session_attributes['item_count'] = first_variable
+                    session_attributes['f_name'] = f_name
+                    session_attributes['item_list'] = None
+
+                output = "Ok! Specify the first item "
+                output_speak = "Now, Specify the first Parameter. "
+
+            else:
+               script_line+= f"{f_name}() "
+               output_speak = 'Function called successfully'
+               update_indent(handler_input, 1)
+               output = script_line
+               try:
+                    session_attributes['current_script_code'] += '\n'
+                    session_attributes['current_script_code'] += script_line
+                    
+               except KeyError:
+                   session_attributes['current_script_code'] = script_line
+               update_state(handler_input);
+                
+
+        handler_input.response_builder.speak(output).set_card(
+            SimpleCard(SKILL_NAME, output))
+        handler_input.response_builder.set_should_end_session(False)
+        return handler_input.response_builder.response
+
+
+class CallingFunctionParameterIntentHandler(AbstractRequestHandler):
+    """Handler for calling function with parameters."""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("CallingFunctionParameterIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In CallingFunctionParameterIntentHandler")
+
+        session_attributes = handler_input.attributes_manager.session_attributes
+        logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
+        f_name = session_attributes['f_name']
+        item_count = session_attributes['item_count']
+        total_items = session_attributes['item_list'] 
+        curr_item = get_slot_data(handler_input, 'variable_name', logger=logger)['value']
+        
+        output=""          
+        if curr_item is None:
+            logger.debug('function parameters not provided')
+        
+        if curr_item is None:
+            output += 'function parameters not provided.'
+        
+        else:
+            indent = get_indent(handler_input)
+            script_line=indent
+            if item_count is 0:
+                output = "Sorry ! the function cannot accept more parameters"
+            elif item_count is 1:
+                if total_items is None:
+                    script_line +=f'{f_name}({curr_item}) '
+                else:
+                    lis=""
+                    for x in total_items:
+                        lis+=x
+                        lis+=', '
+                    script_line+=f'{f_name}({lis}{curr_item})'
+                try:
+                    session_attributes['current_script_code'] += '\n'
+                    session_attributes['current_script_code'] += script_line
+                except KeyError:
+                    session_attributes['current_script_code'] = script_line
+                output = script_line
+                output_display = script_line
+                update_state(handler_input);
+            else:
+                if session_attributes['item_list'] == None:
+                    session_attributes['item_list']=[curr_item]
+                else:
+                    session_attributes['item_list'].append(curr_item)
+                session_attributes['item_count']-=1
+                output = "Fine, next parameter please."
+                output_display = "Fine, next parameter please"
+
+        handler_input.response_builder.speak(output).set_card(
+            SimpleCard(SKILL_NAME, output))
+        handler_input.response_builder.set_should_end_session(False)
+        return handler_input.response_builder.response
+
+class AddingReturnInFunctionIntentHandler(AbstractRequestHandler):
+    """Handler for adding return with some variable e.g-> return {variable_name}"""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("AddingReturnInFunctionIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In AddingReturnInFunctionIntentHandler")
+
+        session_attributes = handler_input.attributes_manager.session_attributes
+        logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
+        
+        first_variable = get_slot_data(handler_input, 'first_variable', logger=logger)['value']
+        
+        output=""          
+        if first_variable is None:
+            logger.debug(f'{first_variable} not provided')
+        
+        if first_variable is None:
+            output += ' What to return not mentioned.'
+        
+        else:
+            
+            script_line = f"return {first_variable}"
+            try:
+                session_attributes['current_script_code'] += '\n'
+                session_attributes['current_script_code'] += script_line
+            except KeyError:
+                session_attributes['current_script_code'] = script_line
+                
+            output = script_line
+            update_state(handler_input);
+
+        handler_input.response_builder.speak(output).set_card(
+            SimpleCard(SKILL_NAME, output))
+        handler_input.response_builder.set_should_end_session(False)
+        return handler_input.response_builder.response
+
+
 # Make sure any new handlers or interceptors you've
 # defined are included below. The order matters - they're processed top to bottom.
 
@@ -1473,6 +1642,10 @@ sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(SessionEndedRequestHandler())
 sb.add_request_handler(BinaryOperationIntentHandler())
 sb.add_request_handler(UndoIntentHandler())
+
+sb.add_request_handler(FunctionCallingIntentHandler())
+sb.add_request_handler(CallingFunctionParameterIntentHandler())
+sb.add_request_handler(AddingReturnInFunctionIntentHandler())
 
 sb.add_request_handler(DefineListItemIntentHandler())
 sb.add_request_handler(DynamicListInsertionIntentHandler())
