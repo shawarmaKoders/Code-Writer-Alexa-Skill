@@ -1206,6 +1206,7 @@ class FunctionCreationIntentHandler(AbstractRequestHandler):
                 output_speak = 'function created successfully'
                 update_indent(handler_input, 1)
                 output = script_line
+                update_state(handler_input)
                 try:
                     session_attributes['current_script_code'] += '\n'
                     session_attributes['current_script_code'] += script_line
@@ -1213,7 +1214,6 @@ class FunctionCreationIntentHandler(AbstractRequestHandler):
                 except KeyError:
                     session_attributes['current_script_code'] = script_line
 
-            update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -1261,6 +1261,7 @@ class DefineParameterIntentHandler(AbstractRequestHandler):
                         lis += ' , '
                     script_line += f'def {function_name}({lis}{curr_parameter}) : '
                 update_indent(handler_input, 1)
+                
                 try:
                     session_attributes['current_script_code'] += '\n'
                     session_attributes['current_script_code'] += script_line
@@ -1276,8 +1277,6 @@ class DefineParameterIntentHandler(AbstractRequestHandler):
                 session_attributes['no_parameters'] -= 1
                 output = "Fine, next parameter please."
                 output_display = "Fine, next parameter please"
-
-            update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -1316,6 +1315,132 @@ class UndoIntentHandler(AbstractRequestHandler):
         handler_input.response_builder.set_should_end_session(False)
         return handler_input.response_builder.response
 
+class DynamicListInsertionIntentHandler(AbstractRequestHandler):
+    """Handler for adding items in a list dynamically."""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("DynamicListInsertionIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In DynamicListInsertionIntentHandler")
+
+        session_attributes = handler_input.attributes_manager.session_attributes
+        logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
+        
+        first_variable = int (get_slot_data(handler_input, 'number', logger=logger)['value'])
+        List = get_slot_data(handler_input, 'list_name', logger=logger)['value']
+        
+        output=""
+        logger.info('List name received: '+ str(List))  
+        if List is None:
+            logger.debug('List name not specified')
+            output += 'List name not specified.'
+
+        if first_variable is None:
+            logger.debug('Number of List item not provided')
+            output += 'Number of List item not provided.'
+        
+        elif List is not None:
+            output=""
+            output_speak=""
+            indent = get_indent(handler_input)
+            script_line=indent
+            if first_variable != 0:
+                try:
+                    session_attributes['item_count'] = first_variable
+                    session_attributes['list_name'] = List
+                    session_attributes['item_list'] = None
+                    
+                except KeyError:
+                    session_attributes['item_count'] = first_variable
+                    session_attributes['list_name'] = List
+                    session_attributes['item_list'] = None
+
+                output = "Ok! Specify the first item "
+                output_speak = "Ok! Specify the first item "
+
+            else:
+               script_line+= f"List = [] :"
+               output_speak = 'List created successfully'
+               update_indent(handler_input, 1)
+               output = script_line
+               try:
+                    session_attributes['current_script_code'] += '\n'
+                    session_attributes['current_script_code'] += script_line
+                    
+               except KeyError:
+                    session_attributes['current_script_code'] = script_line
+                
+               update_state(handler_input)
+
+        handler_input.response_builder.speak(output).set_card(
+            SimpleCard(SKILL_NAME, output))
+        handler_input.response_builder.set_should_end_session(False)
+        return handler_input.response_builder.response
+
+
+class DefineListItemIntentHandler(AbstractRequestHandler):
+    """Handler for getting list items."""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("DefineListItemIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In DefineListItemIntentHandler")
+
+        session_attributes = handler_input.attributes_manager.session_attributes
+        logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
+        list_name = session_attributes['list_name']
+        item_count = session_attributes['item_count']
+        total_items = session_attributes['item_list'] 
+        curr_item = get_slot_data(handler_input, 'variable_name', logger=logger)['value']
+        
+        output=""          
+        if curr_item is None:
+            logger.debug('list items not provided')
+        
+        if curr_item is None:
+            output += 'List item not provided.'
+        
+        else:
+            indent = get_indent(handler_input)
+            script_line=indent
+            if item_count is 0:
+                output = "Sorry ! the list cannot accept more parameters"
+            elif item_count is 1:
+                if total_items is None:
+                    script_line +=f'{list_name}=[{curr_item}] '
+                else:
+                    lis=""
+                    for x in total_items:
+                        lis+=x
+                        lis+=' , '
+                    script_line+=f'{list_name}=[{lis}{curr_item}]'
+                try:
+                    session_attributes['current_script_code'] += '\n'
+                    session_attributes['current_script_code'] += script_line
+                except KeyError:
+                    session_attributes['current_script_code'] = script_line
+                output = script_line
+                output_display = script_line
+                update_state(handler_input);
+            else:
+                if session_attributes['item_list'] == None:
+                    session_attributes['item_list']=[curr_item]
+                else:
+                    session_attributes['item_list'].append(curr_item)
+                session_attributes['item_count']-=1
+                output = "Fine, next item please."
+                output_display = "Fine, next item please"
+
+        handler_input.response_builder.speak(output).set_card(
+            SimpleCard(SKILL_NAME, output))
+        handler_input.response_builder.set_should_end_session(False)
+        return handler_input.response_builder.response
 
 # Make sure any new handlers or interceptors you've
 # defined are included below. The order matters - they're processed top to bottom.
@@ -1349,6 +1474,8 @@ sb.add_request_handler(SessionEndedRequestHandler())
 sb.add_request_handler(BinaryOperationIntentHandler())
 sb.add_request_handler(UndoIntentHandler())
 
+sb.add_request_handler(DefineListItemIntentHandler())
+sb.add_request_handler(DynamicListInsertionIntentHandler())
 # make sure IntentReflectorHandler is last so it doesn't override your custom intent handlers
 # sb.add_request_handler(IntentReflectorHandler())
 
