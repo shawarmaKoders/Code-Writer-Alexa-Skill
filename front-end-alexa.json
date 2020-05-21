@@ -88,6 +88,9 @@
                             "name": "starting_number",
                             "type": "AMAZON.NUMBER",
                             "samples": [
+                                "begin at {starting_number}",
+                                "{starting_number} is the start",
+                                "starting at {starting_number}",
                                 "It should start at {starting_number}"
                             ]
                         },
@@ -95,6 +98,9 @@
                             "name": "ending_number",
                             "type": "AMAZON.NUMBER",
                             "samples": [
+                                "{ending_number} would be the end",
+                                "{ending_number} is the end",
+                                "end at {ending_number}",
                                 "the end should be at {ending_number}"
                             ]
                         }
@@ -123,18 +129,6 @@
                         "Print {variable_name}",
                         "Show the value of {variable_name}",
                         "What's the value of {variable_name}"
-                    ]
-                },
-                {
-                    "name": "DeleteLineIntent",
-                    "slots": [],
-                    "samples": [
-                        "remove the previous line",
-                        "undo that for me",
-                        "delete that last one",
-                        "Clear the last line",
-                        "Delete the last line",
-                        "Remove the last line"
                     ]
                 },
                 {
@@ -495,6 +489,21 @@
                 {
                     "name": "variable_type",
                     "values": [
+                        {
+                            "name": {
+                                "value": "bus"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "car"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "x"
+                            }
+                        },
                         {
                             "name": {
                                 "value": "count"
