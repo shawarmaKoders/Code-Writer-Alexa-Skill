@@ -1413,14 +1413,13 @@ class DefineListItemIntentHandler(AbstractRequestHandler):
                 output = "Sorry ! the list cannot accept more parameters"
             elif item_count is 1:
                 if total_items is None:
-                    script_line +=f'list_name=[{curr_item}] '
+                    script_line +=f'{list_name}=[{curr_item}] '
                 else:
                     lis=""
                     for x in total_items:
                         lis+=x
                         lis+=' , '
-                    script_line+=f'list_name=[{lis}{curr_item}]'
-                update_indent(handler_input, 1)
+                    script_line+=f'{list_name}=[{lis}{curr_item}]'
                 update_state(handler_input);
                 try:
                     session_attributes['current_script_code'] += '\n'
