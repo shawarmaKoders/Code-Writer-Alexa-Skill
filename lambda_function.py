@@ -1366,7 +1366,6 @@ class DynamicListInsertionIntentHandler(AbstractRequestHandler):
                output_speak = 'List created successfully'
                update_indent(handler_input, 1)
                output = script_line
-               update_state(handler_input)
                try:
                     session_attributes['current_script_code'] += '\n'
                     session_attributes['current_script_code'] += script_line
@@ -1374,6 +1373,7 @@ class DynamicListInsertionIntentHandler(AbstractRequestHandler):
                except KeyError:
                     session_attributes['current_script_code'] = script_line
                 
+               update_state(handler_input)
 
         handler_input.response_builder.speak(output).set_card(
             SimpleCard(SKILL_NAME, output))
@@ -1420,7 +1420,6 @@ class DefineListItemIntentHandler(AbstractRequestHandler):
                         lis+=x
                         lis+=' , '
                     script_line+=f'{list_name}=[{lis}{curr_item}]'
-                update_state(handler_input);
                 try:
                     session_attributes['current_script_code'] += '\n'
                     session_attributes['current_script_code'] += script_line
@@ -1428,6 +1427,7 @@ class DefineListItemIntentHandler(AbstractRequestHandler):
                     session_attributes['current_script_code'] = script_line
                 output = script_line
                 output_display = script_line
+                update_state(handler_input);
             else:
                 if session_attributes['item_list'] == None:
                     session_attributes['item_list']=[curr_item]
