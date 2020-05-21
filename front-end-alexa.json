@@ -517,6 +517,58 @@
                         "{variable_name} is the next list item",
                         "next list item will be {variable_name}"
                     ]
+                },
+                {
+                    "name": "AddingReturnInFunctionIntent",
+                    "slots": [
+                        {
+                            "name": "first_variable",
+                            "type": "variable_type"
+                        }
+                    ],
+                    "samples": [
+                        "{first_variable} should be returned",
+                        "return {first_variable}",
+                        "give back {first_variable}"
+                    ]
+                },
+                {
+                    "name": "FunctionCallingIntent",
+                    "slots": [
+                        {
+                            "name": "function_name",
+                            "type": "variable_type",
+                            "samples": [
+                                "please call {function_name}",
+                                "i want to call {function_name}"
+                            ]
+                        },
+                        {
+                            "name": "number",
+                            "type": "AMAZON.NUMBER",
+                            "samples": [
+                                "this calling function will take {number} parameters"
+                            ]
+                        }
+                    ],
+                    "samples": [
+                        "call function {function_name} with {number} arguments",
+                        "call function {function_name} accepting {number} parameters",
+                        "call a function named {function_name} having {number} parameters"
+                    ]
+                },
+                {
+                    "name": "CallingFunctionParameterIntent",
+                    "slots": [
+                        {
+                            "name": "variable_name",
+                            "type": "variable_type"
+                        }
+                    ],
+                    "samples": [
+                        "next prameter for this calling function will be {variable_name}",
+                        "first parameter of the calling function will be {variable_name}"
+                    ]
                 }
             ],
             "types": [
@@ -925,6 +977,31 @@
                             }
                         }
                     ]
+                },
+                {
+                    "name": "FunctionCallingIntent",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "function_name",
+                            "type": "variable_type",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1431394654169.1479780331552"
+                            }
+                        },
+                        {
+                            "name": "number",
+                            "type": "AMAZON.NUMBER",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1431394654169.1063184953598"
+                            }
+                        }
+                    ]
                 }
             ],
             "delegationStrategy": "ALWAYS"
@@ -1070,6 +1147,24 @@
                     {
                         "type": "PlainText",
                         "value": "You have not mentioned the number of items your list will have"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.1431394654169.1479780331552",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "you have not specified the function you want to call"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.1431394654169.1063184953598",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "please tell how many parameters this calling function will take?"
                     }
                 ]
             }
