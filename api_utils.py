@@ -15,12 +15,11 @@ def stdoutIO(stdout=None):
 
 
 def execute_code(code_string):
-    paste = None
+    res = requests.post(url='https://hastebin.com/documents', data=code_string)
+    paste = f"https://hastebin.com/{res.json()['key']}"
     with stdoutIO() as s:
         try:
             exec(code_string)
-            res = requests.post(url='https://hastebin.com/documents', data=code_string)
-            paste = f"https://hastebin.com/{res.json()['key']}"
         except:
             print('ERROR_Z')
 
