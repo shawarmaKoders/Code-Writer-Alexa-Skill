@@ -65,23 +65,6 @@
                     ]
                 },
                 {
-                    "name": "NewListIntent",
-                    "slots": [
-                        {
-                            "name": "variable_name",
-                            "type": "variable_type"
-                        }
-                    ],
-                    "samples": [
-                        "create a new list named {variable_name}",
-                        "create a new list {variable_name}",
-                        "create {variable_name} as a new list",
-                        "create a new list with name {variable_name}",
-                        "create an array with name {variable_name}",
-                        "create a new list with variable {variable_name}"
-                    ]
-                },
-                {
                     "name": "ForLoopIntent",
                     "slots": [
                         {
@@ -124,9 +107,10 @@
                         }
                     ],
                     "samples": [
-                        "Output {variable_name}",
+                        "now display value of {variable_name}",
+                        "print value of {variable_name}",
+                        "output variable {variable_name}",
                         "Display the value of {variable_name}",
-                        "Print {variable_name}",
                         "Show the value of {variable_name}",
                         "What's the value of {variable_name}"
                     ]
@@ -482,6 +466,56 @@
                         "remove the last line",
                         "undo that last one",
                         "can you undo that last one"
+                    ]
+                },
+                {
+                    "name": "DynamicListInsertionIntent",
+                    "slots": [
+                        {
+                            "name": "list_name",
+                            "type": "variable_type",
+                            "samples": [
+                                "give name to list as {list_name}",
+                                "list name would be {list_name}",
+                                "name of my list is {list_name}",
+                                "list  name is {list_name}"
+                            ]
+                        },
+                        {
+                            "name": "number",
+                            "type": "AMAZON.NUMBER",
+                            "samples": [
+                                "total items in the list will be {number}",
+                                "list will have {number} items"
+                            ]
+                        }
+                    ],
+                    "samples": [
+                        "define a list {list_name} having {number} objects",
+                        "new list {list_name} with {number} arguments",
+                        "create an array with name {list_name} ",
+                        "create a new list named {list_name}",
+                        "create a list {list_name}",
+                        "I want a list with name {list_name} and {number} items",
+                        "Make a list {list_name} with {number} items",
+                        "Create a list named {list_name} with {number} number of items"
+                    ]
+                },
+                {
+                    "name": "DefineListItemIntent",
+                    "slots": [
+                        {
+                            "name": "variable_name",
+                            "type": "variable_type"
+                        }
+                    ],
+                    "samples": [
+                        "{variable_name} is the next item in the list",
+                        "next item in list is {variable_name}",
+                        "{variable_name} is the first list item",
+                        "first item of list is {variable_name}",
+                        "{variable_name} is the next list item",
+                        "next list item will be {variable_name}"
                     ]
                 }
             ],
@@ -866,6 +900,31 @@
                             }
                         }
                     ]
+                },
+                {
+                    "name": "DynamicListInsertionIntent",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "list_name",
+                            "type": "variable_type",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.562255703989.471855265636"
+                            }
+                        },
+                        {
+                            "name": "number",
+                            "type": "AMAZON.NUMBER",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.562255703989.676110470714"
+                            }
+                        }
+                    ]
                 }
             ],
             "delegationStrategy": "ALWAYS"
@@ -977,6 +1036,40 @@
                     {
                         "type": "PlainText",
                         "value": "what should be the ending point"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.562255703989.471855265636",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "you have not mentioned the list name,Please let me know it to move ahead"
+                    },
+                    {
+                        "type": "PlainText",
+                        "value": "I need a list name to proceed further"
+                    },
+                    {
+                        "type": "PlainText",
+                        "value": "I think you have forgot to tell me the list name, Please provide it"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.562255703989.676110470714",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "you have not mentioned total items count"
+                    },
+                    {
+                        "type": "PlainText",
+                        "value": "please tell the number of items in the list"
+                    },
+                    {
+                        "type": "PlainText",
+                        "value": "You have not mentioned the number of items your list will have"
                     }
                 ]
             }
