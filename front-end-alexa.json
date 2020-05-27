@@ -175,7 +175,7 @@
                     "slots": [
                         {
                             "name": "print_statement",
-                            "type": "string_value_type"
+                            "type": "variable_type"
                         }
                     ],
                     "samples": [
